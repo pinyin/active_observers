@@ -55,6 +55,8 @@ void main() {
       ]);
     });
   });
+
+  group('observeStream', () {});
 }
 
 class TestObserveState extends StatefulWidget {
@@ -71,7 +73,7 @@ class _TestObserveStateState extends State<TestObserveState>
   @override
   initState() {
     super.initState();
-    state = observeState('a', this);
+    state = observeState('a')(this);
   }
 
   ObserveState<String> state;
@@ -102,7 +104,7 @@ class _TestObserveEffectState extends State<TestObserveEffect>
     observeEffect(() {
       widget.reportState(StateLifecyclePhase.didUpdateWidget);
       return () => {widget.reportState(StateLifecyclePhase.dispose)};
-    }, () => widget.isIdentical, this);
+    }, () => widget.isIdentical)(this);
   }
 
   @override

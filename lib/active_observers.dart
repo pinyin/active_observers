@@ -4,31 +4,36 @@ import 'dart:ui';
 
 import 'package:observable_state_lifecycle/observable_state_lifecycle.dart';
 
-void observeEffect(VoidCallback Function() effect, bool Function() isIdentical,
-    ObservableStateLifecycle host) {
-  VoidCallback cancel;
+typedef ActiveObserver<T> = T Function(ObservableStateLifecycle);
 
-  host.addLifecycleObserver((phase) {
-    switch (phase) {
-      case StateLifecyclePhase.initState:
-        cancel = effect();
-        break;
-      case StateLifecyclePhase.didUpdateWidget:
-        if (isIdentical()) break;
-        cancel();
-        cancel = effect();
-        break;
-      case StateLifecyclePhase.dispose:
-        cancel();
-        break;
-      default:
-        {}
-    }
-  });
+ActiveObserver<void> observeEffect(VoidCallback Function() effect,
+    [bool Function() isIdentical = _alwaysReturnTrue]) {
+  return (host) {
+    VoidCallback cancel;
+    host.addLifecycleObserver((phase) {
+      switch (phase) {
+        case StateLifecyclePhase.initState:
+          cancel = effect();
+          break;
+        case StateLifecyclePhase.didUpdateWidget:
+          if (isIdentical()) break;
+          cancel();
+          cancel = effect();
+          break;
+        case StateLifecyclePhase.dispose:
+          cancel();
+          break;
+        default:
+          {}
+      }
+    });
+  };
 }
 
-ObserveState<S> observeState<S>(S initialValue, ObservableStateLifecycle host) {
-  return ObserveState(initialValue, host);
+ActiveObserver<ObserveState<S>> observeState<S>(S initialValue) {
+  return (host) {
+    return ObserveState(initialValue, host);
+  };
 }
 
 class ObserveState<S> {
@@ -53,4 +58,8 @@ class ObserveState<S> {
   void set(S newValue) {
     value = newValue;
   }
+}
+
+bool _alwaysReturnTrue() {
+  return true;
 }
