@@ -36,6 +36,15 @@ ActiveObserver<ObserveState<S>> observeState<S>(S initialValue) {
   };
 }
 
+ActiveObserver<void> observeStream<T>(Stream<T> stream, void onData(T event),
+    {void Function(Object, StackTrace) onError, void onDone()}) {
+  return (host) {
+    return observeEffect(() {
+      return stream.listen(onData, onError: onError, onDone: onDone).cancel;
+    })(host);
+  };
+}
+
 class ObserveState<S> {
   ObserveState(S initialValue, ObservableStateLifecycle state)
       : _state = state,
