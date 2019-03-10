@@ -4,8 +4,30 @@ import 'dart:ui';
 
 import 'package:observable_state_lifecycle/observable_state_lifecycle.dart';
 
-typedef ActiveObserver<T> = T Function(ObservableStateLifecycle);
+/// A type of observers that subscribes itself actively to the target [State].
+/// Like ordinary observers, an active observer listens from one or many observables
+/// and reactive to the events, but the subscription is done by the active observer
+/// rather than the observable. After subscription, data flows from the observable
+/// to the active observer.
+/// The word "active" means the observer acts actively, rather than "passively":
+/// ```dart
+/// // passively:
+/// observable.addListener(observer)
+/// // actively:
+/// observer.listenTo(observable)
+/// observer(observable) // when lambda is supported
+/// ```
+/// Active observers pattern allows us to compose observers in a scalable way and
+/// make observers much more powerful.
+/// Inspired by React hooks.
+/// In this case, the [observable] being observed is a Flutter [StatefulWidget] [State].
+typedef ActiveObserver<T> = T Function(ObservableStateLifecycle observable);
 
+/// [effect] will be called in State's [initState].
+/// [effect] should return a callback that will be called in [dispose]. Typically,
+/// the callback should contain [effect]'s clean up logic.
+/// If the widget is updated([didUpdateWidget]) and [isIdentical] returns false,
+/// the callback returned from [effect] will be called, then [effect] is called again.
 ActiveObserver<void> observeEffect(VoidCallback Function() effect,
     [bool Function() isIdentical = _alwaysReturnTrue]) {
   return (host) {
@@ -30,12 +52,15 @@ ActiveObserver<void> observeEffect(VoidCallback Function() effect,
   };
 }
 
+/// Create a value. Updating the value would cause [StatefulWidget] to rebuild.
 ActiveObserver<ObserveState<S>> observeState<S>(S initialValue) {
   return (host) {
     return ObserveState(initialValue, host);
   };
 }
 
+/// Add a listener to a stream. The listener will be automatically cancelled
+/// when the [State] is disposed.
 ActiveObserver<void> observeStream<T>(Stream<T> stream, void onData(T event),
     {void Function(Object, StackTrace) onError, void onDone()}) {
   return (host) {
@@ -53,6 +78,7 @@ class ObserveState<S> {
   S _value;
   final ObservableStateLifecycle _state;
 
+  /// stored value, [State] will rebuild after a new value is set
   S get value => _value;
   set value(S newValue) {
     if (newValue == _value) return;
@@ -60,10 +86,12 @@ class ObserveState<S> {
     _state.setState(() {});
   }
 
+  /// get stored value
   S get() {
     return value;
   }
 
+  /// set store value, [State] will rebuild if the old and new values are not identical
   void set(S newValue) {
     value = newValue;
   }
