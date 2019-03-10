@@ -2,6 +2,7 @@ library active_observers;
 
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:observable_state_lifecycle/observable_state_lifecycle.dart';
 
 /// A type of observers that subscribes itself actively to the target [State].
@@ -67,6 +68,31 @@ ActiveObserver<void> observeStream<T>(Stream<T> stream, void onData(T event),
     return observeEffect(() {
       return stream.listen(onData, onError: onError, onDone: onDone).cancel;
     })(host);
+  };
+}
+
+/// Add a listener to a [Listenable]. The listener will be automatically cancelled
+/// when the [State] is disposed.
+ActiveObserver<void> observeListenable(
+    Listenable listenable, VoidCallback callback) {
+  return (host) {
+    observeEffect(() {
+      listenable.addListener(callback);
+      return () {
+        listenable.removeListener(callback);
+      };
+    })(host);
+  };
+}
+
+/// Add a listener to a [ValueListenable]. The listener will be automatically cancelled
+/// when the [State] is disposed.
+/// This can also be used with [AnimationController] since [AnimationController] is a
+/// [ValueListenable]
+ActiveObserver<void> observeValueListenable<T>(
+    ValueListenable<T> listenable, void Function(T) callback) {
+  return (host) {
+    observeListenable(listenable, () => callback(listenable.value))(host);
   };
 }
 
