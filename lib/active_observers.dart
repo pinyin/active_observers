@@ -27,8 +27,9 @@ typedef ActiveObserver<T> = T Function(ObservableStateLifecycle observable);
 /// [effect] will be called in State's [initState].
 /// [effect] should return a callback that will be called in [dispose]. Typically,
 /// the callback should contain [effect]'s clean up logic.
-/// If the widget is updated([didUpdateWidget]) and [isIdentical] returns false,
-/// the callback returned from [effect] will be called, then [effect] is called again.
+/// Whenever the widget is updated([didUpdateWidget]), if [isIdentical] returns false
+/// the callback returned by previous [effect] will be called to clean up previous
+/// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 ActiveObserver<void> observeEffect(VoidCallback Function() effect,
     [bool Function() isIdentical = _alwaysReturnTrue]) {
   return (host) {
