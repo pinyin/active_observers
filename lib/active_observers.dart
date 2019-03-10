@@ -63,26 +63,33 @@ ActiveObserver<ObserveState<S>> observeState<S>(S initialValue) {
 
 /// Add a listener to a stream. The listener will be automatically cancelled
 /// when the [State] is disposed.
-ActiveObserver<void> observeStream<T>(Stream<T> stream, void onData(T event),
+ActiveObserver<void> observeStream<T>(
+    Stream<T> getStream(), void onData(T event),
     {void Function(Object, StackTrace) onError, void onDone()}) {
   return (host) {
+    Stream<T> stream;
     return observeEffect(() {
-      return stream.listen(onData, onError: onError, onDone: onDone).cancel;
-    })(host);
+      stream = getStream();
+      return getStream()
+          .listen(onData, onError: onError, onDone: onDone)
+          .cancel;
+    }, () => stream == getStream())(host);
   };
 }
 
 /// Add a listener to a [Listenable]. The listener will be automatically cancelled
 /// when the [State] is disposed.
 ActiveObserver<void> observeListenable(
-    Listenable listenable, VoidCallback callback) {
+    Listenable getListenable(), VoidCallback callback) {
   return (host) {
+    Listenable listenable;
     observeEffect(() {
+      listenable = getListenable();
       listenable.addListener(callback);
       return () {
         listenable.removeListener(callback);
       };
-    })(host);
+    }, () => listenable == getListenable())(host);
   };
 }
 
@@ -90,10 +97,20 @@ ActiveObserver<void> observeListenable(
 /// This can also be used with [AnimationController] since [AnimationController] is a
 /// [ValueListenable]
 ActiveObserver<ObserveState<T>> observeValueListenableState<T>(
-    ValueListenable<T> listenable) {
+    ValueListenable<T> getValueListenable()) {
   return (host) {
-    final state = observeState(listenable.value)(host);
-    observeListenable(listenable, () => state.set(listenable.value))(host);
+    ValueListenable<T> valueListenable;
+    final state = observeState<T>(null)(host);
+    observeEffect(() {
+      valueListenable = getValueListenable();
+      state.value = valueListenable.value;
+      void updateState() {
+        state.value = valueListenable.value;
+      }
+
+      valueListenable.addListener(updateState);
+      return () => valueListenable.removeListener(updateState);
+    }, () => valueListenable == getValueListenable())(host);
     return state;
   };
 }

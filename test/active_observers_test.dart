@@ -87,6 +87,21 @@ void main() {
       expect(find.text('done'), findsOneWidget);
       subject.close();
     });
+    testWidgets('should subscribe to new stream if stream updates',
+        (tester) async {
+      final subject = StreamController<String>(sync: true);
+      await tester.pumpWidget(TestObserveStream(stream: subject.stream));
+      subject.add('1');
+      await tester.pump();
+      expect(find.text('1'), findsOneWidget);
+      final subject2 = StreamController<String>(sync: true);
+      await tester.pumpWidget(TestObserveStream(stream: subject2.stream));
+      subject2.add('2');
+      await tester.pump();
+      expect(find.text('2'), findsOneWidget);
+      subject.close();
+      subject2.close();
+    });
   });
 
   group('observeListenable', () {
@@ -119,9 +134,26 @@ void main() {
       expect(count, 0);
       expect(source.hasListeners, false);
     });
+    testWidgets('should subscribe to new Listenable if updates',
+        (tester) async {
+      int count = 0;
+      final source = ValueNotifier(0);
+      final Listenable listenable = source;
+      await tester.pumpWidget(
+          TestObserveListenable(listenable: listenable, report: () => count++));
+      expect(count, 0);
+      source.value = 1;
+      final source2 = ValueNotifier(0);
+      final Listenable listenable2 = source2;
+      await tester.pumpWidget(TestObserveListenable(
+          listenable: listenable2, report: () => count++));
+      expect(count, 1);
+      expect(source.hasListeners, false);
+      expect(source2.hasListeners, true);
+    });
   });
 
-  group('observeValueListenerState', () {
+  group('observeValueListenableState', () {
     testWidgets('should update widget with value', (tester) async {
       final source = ValueNotifier('a');
       await tester
@@ -141,6 +173,19 @@ void main() {
       await tester.pumpWidget(Container());
       source.value = 'b';
       expect(source.hasListeners, false);
+    });
+    testWidgets('should update widget with value if ValueListenable changes',
+        (tester) async {
+      final source = ValueNotifier('a');
+      await tester
+          .pumpWidget(TestObserveValueListenableState(listenable: source));
+      expect(find.text('a'), findsOneWidget);
+      final source2 = ValueNotifier('b');
+      await tester
+          .pumpWidget(TestObserveValueListenableState(listenable: source2));
+      expect(find.text('b'), findsOneWidget);
+      expect(source.hasListeners, false);
+      expect(source2.hasListeners, true);
     });
   });
 }
@@ -162,7 +207,7 @@ class _TestObserveValueListenableStateState
   @override
   void initState() {
     super.initState();
-    value = observeValueListenableState(widget.listenable)(this);
+    value = observeValueListenableState(() => widget.listenable)(this);
   }
 
   ObserveState<String> value;
@@ -189,7 +234,7 @@ class _TestObserveListenableState extends State<TestObserveListenable>
   @override
   void initState() {
     super.initState();
-    observeListenable(widget.listenable, widget.report)(this);
+    observeListenable(() => widget.listenable, widget.report)(this);
   }
 
   @override
@@ -278,7 +323,7 @@ class _TestObserveStreamState extends State<TestObserveStream>
   @override
   void initState() {
     super.initState();
-    observeStream(widget.stream, (value) {
+    observeStream(() => widget.stream, (value) {
       setState(() {
         state = value;
       });
