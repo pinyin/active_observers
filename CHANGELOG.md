@@ -9,3 +9,7 @@
 ## [0.1.1]
 
 * Add `observeStream` 
+
+## [0.1.2]
+
+* Add `observeListenable` & `observeValueListenableState`
