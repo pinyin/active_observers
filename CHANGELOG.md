@@ -13,3 +13,7 @@
 ## [0.1.2]
 
 * Add `observeListenable` & `observeValueListenableState`
+
+## [0.2.0]
+
+* Add dependency update detection logic
