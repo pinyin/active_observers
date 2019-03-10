@@ -86,14 +86,15 @@ ActiveObserver<void> observeListenable(
   };
 }
 
-/// Add a listener to a [ValueListenable]. The listener will be automatically cancelled
-/// when the [State] is disposed.
+/// Update [State] with a [ValueListenable].
 /// This can also be used with [AnimationController] since [AnimationController] is a
 /// [ValueListenable]
-ActiveObserver<void> observeValueListenable<T>(
-    ValueListenable<T> listenable, void Function(T) callback) {
+ActiveObserver<ObserveState<T>> observeValueListenableState<T>(
+    ValueListenable<T> listenable) {
   return (host) {
-    observeListenable(listenable, () => callback(listenable.value))(host);
+    final state = observeState(listenable.value)(host);
+    observeListenable(listenable, () => state.set(listenable.value))(host);
+    return state;
   };
 }
 

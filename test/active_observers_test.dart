@@ -121,10 +121,11 @@ void main() {
     });
   });
 
-  group('observeValueListener', () {
+  group('observeValueListenerState', () {
     testWidgets('should update widget with value', (tester) async {
       final source = ValueNotifier('a');
-      await tester.pumpWidget(TestObserveValueListenable(listenable: source));
+      await tester
+          .pumpWidget(TestObserveValueListenableState(listenable: source));
       expect(find.text('a'), findsOneWidget);
       source.value = 'b';
       await tester.pump();
@@ -133,7 +134,8 @@ void main() {
     testWidgets('should automatically unsubscribe from ValueListenable',
         (tester) async {
       final source = ValueNotifier('a');
-      await tester.pumpWidget(TestObserveValueListenable(listenable: source));
+      await tester
+          .pumpWidget(TestObserveValueListenableState(listenable: source));
       expect(find.text('a'), findsOneWidget);
       expect(source.hasListeners, true);
       await tester.pumpWidget(Container());
@@ -143,24 +145,24 @@ void main() {
   });
 }
 
-class TestObserveValueListenable extends StatefulWidget {
+class TestObserveValueListenableState extends StatefulWidget {
   final ValueListenable<String> listenable;
 
-  const TestObserveValueListenable({Key key, this.listenable})
+  const TestObserveValueListenableState({Key key, this.listenable})
       : super(key: key);
 
   @override
-  _TestObserveValueListenableState createState() =>
-      _TestObserveValueListenableState();
+  _TestObserveValueListenableStateState createState() =>
+      _TestObserveValueListenableStateState();
 }
 
-class _TestObserveValueListenableState extends State<TestObserveValueListenable>
-    with ObservableStateLifecycle<TestObserveValueListenable> {
+class _TestObserveValueListenableStateState
+    extends State<TestObserveValueListenableState>
+    with ObservableStateLifecycle<TestObserveValueListenableState> {
   @override
   void initState() {
     super.initState();
-    value = observeState(widget.listenable.value)(this);
-    observeValueListenable(widget.listenable, value.set)(this);
+    value = observeValueListenableState(widget.listenable)(this);
   }
 
   ObserveState<String> value;
