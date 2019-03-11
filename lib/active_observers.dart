@@ -5,6 +5,9 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:observable_state_lifecycle/observable_state_lifecycle.dart';
 
+export 'package:observable_state_lifecycle/observable_state_lifecycle.dart'
+    show ObservableStateLifecycle, StateLifecyclePhase;
+
 /// A type of observers that subscribes itself actively to the target [State].
 /// Like ordinary observers, an active observer listens from one or many observables
 /// and reactive to the events, but the subscription is done by the active observer
