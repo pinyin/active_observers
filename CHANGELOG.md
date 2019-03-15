@@ -17,3 +17,9 @@
 ## [0.2.0]
 
 * Add dependency update detection logic
+
+## [0.3.0]
+
+* Major rewrite
+* Remove dependencies other than Flutter
+* Active observers should be called in State's constructor
