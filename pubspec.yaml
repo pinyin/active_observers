@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  observable_state_lifecycle: ^0.4.0
 
 
 dev_dependencies:

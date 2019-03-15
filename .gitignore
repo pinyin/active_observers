@@ -12,3 +12,5 @@ ios/Runner/GeneratedPluginRegistrant.*
 ios/
 android/
 .idea/
+
+pubspec.lock
