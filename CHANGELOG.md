@@ -23,3 +23,7 @@
 * Major rewrite
 * Remove dependencies other than Flutter
 * Active observers should be called in State's constructor
+
+## [0.3.1]
+
+* Make active observers run in the expected order
