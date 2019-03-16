@@ -14,10 +14,6 @@ class ObserveState<S> {
         case StateLifecyclePhase.initState:
           _value = getInitialValue();
           break;
-        case StateLifecyclePhase.reassemble:
-          _value = getInitialValue();
-          host.setState(() {});
-          break;
         default:
           {}
       }

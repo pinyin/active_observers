@@ -27,3 +27,7 @@
 ## [0.3.1]
 
 * Make active observers run in the expected order
+
+## [0.3.2]
+
+* Always restart effect on `reassemble`

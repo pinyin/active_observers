@@ -19,8 +19,11 @@ ActiveObserver<void> observeEffect(VoidCallback Function() effect,
           cancel = effect();
           break;
         case StateLifecyclePhase.didUpdateWidget:
-        case StateLifecyclePhase.reassemble:
           if (isIdentical()) break;
+          cancel();
+          cancel = effect();
+          break;
+        case StateLifecyclePhase.reassemble:
           cancel();
           cancel = effect();
           break;
