@@ -1,5 +1,7 @@
 # active_observers
 
+[![Build Status](https://travis-ci.com/pinyin/active_observers.svg?branch=master)](https://travis-ci.com/pinyin/active_observers)
+
 A new way to create composable UI logic, inspired by React hooks.
 
 ## Getting Started
