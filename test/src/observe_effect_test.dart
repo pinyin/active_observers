@@ -53,7 +53,8 @@ class TestObserveEffect extends StatefulWidget {
 
 class _TestObserveEffectState extends State<TestObserveEffect>
     with ActiveObservers {
-  _TestObserveEffectState() {
+  @override
+  assembleActiveObservers() {
     observeEffect(() {
       widget.report(Report.EffectStart);
       return () => {widget.report(Report.EffectCleanUp)};

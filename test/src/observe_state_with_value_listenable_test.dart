@@ -55,7 +55,7 @@ class TestObserveValueListenableState extends StatefulWidget {
 
 class _TestObserveValueListenableStateState
     extends State<TestObserveValueListenableState> with ActiveObservers {
-  _TestObserveValueListenableStateState() {
+  assembleActiveObservers() {
     value = observeStateWithValueListenable(() => widget.listenable)(this);
   }
 

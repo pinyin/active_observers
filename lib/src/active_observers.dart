@@ -22,10 +22,13 @@ import 'package:flutter/widgets.dart';
 /// Inspired by React hooks.
 /// In this case, the [observable] being observed is a Flutter [StatefulWidget] [State].
 mixin ActiveObservers<T extends StatefulWidget> on State<T> {
+  assembleActiveObservers() {}
+
   @override
   @mustCallSuper
   void initState() {
     super.initState();
+    assembleActiveObservers();
     activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.initState);
     });
@@ -53,8 +56,12 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void reassemble() {
     super.reassemble();
+    activeObservers.toList(growable: false).reversed.forEach((observer) {
+      observer(StateLifecyclePhase.dispose);
+    });
+    assembleActiveObservers();
     activeObservers.forEach((observer) {
-      observer(StateLifecyclePhase.reassemble);
+      observer(StateLifecyclePhase.initState);
     });
   }
 
@@ -90,7 +97,6 @@ enum StateLifecyclePhase {
   initState,
   didUpdateWidget,
   didChangeDependencies,
-  reassemble,
   deactivate,
   dispose,
 }

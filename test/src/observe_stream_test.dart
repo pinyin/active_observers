@@ -62,7 +62,7 @@ class TestObserveStream extends StatefulWidget {
 
 class _TestObserveStreamState extends State<TestObserveStream>
     with ActiveObservers {
-  _TestObserveStreamState() {
+  assembleActiveObservers() {
     observeStream(() => widget.stream, (value) {
       setState(() {
         state = value;

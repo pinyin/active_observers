@@ -40,7 +40,7 @@ class TestObserveState extends StatefulWidget {
 
 class _TestObserveStateState extends State<TestObserveState>
     with ActiveObservers {
-  _TestObserveStateState() {
+  assembleActiveObservers() {
     state = observeState(() => 'a')(this);
   }
 

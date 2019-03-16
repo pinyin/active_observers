@@ -54,7 +54,9 @@ class TestObserveOrder extends StatefulWidget {
 
 class _TestObserveOrderState extends State<TestObserveOrder>
     with ActiveObservers {
-  _TestObserveOrderState() {
+  // TODO find a way to test reassemble
+
+  assembleActiveObservers() {
     activeObservers.add((phase) {
       widget.report(Report(1, phase));
     });

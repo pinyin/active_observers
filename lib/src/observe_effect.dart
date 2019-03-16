@@ -23,10 +23,6 @@ ActiveObserver<void> observeEffect(VoidCallback Function() effect,
           cancel();
           cancel = effect();
           break;
-        case StateLifecyclePhase.reassemble:
-          cancel();
-          cancel = effect();
-          break;
         case StateLifecyclePhase.dispose:
           cancel();
           break;
