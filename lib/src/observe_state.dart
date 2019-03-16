@@ -8,23 +8,31 @@ ActiveObserver<ObserveState<S>> observeState<S>(S getInitialValue()) {
 }
 
 class ObserveState<S> {
-  ObserveState(S getInitialValue(), ActiveObservers state) : _state = state {
-    state.activeObservers.add((phase) {
-      if (phase == StateLifecyclePhase.initState) {
-        _value = getInitialValue();
+  ObserveState(S getInitialValue(), ActiveObservers host) : _host = host {
+    host.activeObservers.add((phase) {
+      switch (phase) {
+        case StateLifecyclePhase.initState:
+          _value = getInitialValue();
+          break;
+        case StateLifecyclePhase.reassemble:
+          _value = getInitialValue();
+          host.setState(() {});
+          break;
+        default:
+          {}
       }
     });
   }
 
   S _value;
-  final ActiveObservers _state;
+  final ActiveObservers _host;
 
   /// stored value, [State] will rebuild after a new value is set
   S get value => _value;
   set value(S newValue) {
     if (newValue == _value) return;
     _value = newValue;
-    _state.setState(() {});
+    _host.setState(() {});
   }
 
   /// get stored value
