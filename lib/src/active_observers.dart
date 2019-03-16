@@ -1,5 +1,7 @@
 library observable_state_active;
 
+import 'dart:collection';
+
 import 'package:flutter/widgets.dart';
 
 /// A type of observers that subscribes itself actively to the target [State].
@@ -59,7 +61,8 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void deactivate() {
-    activeObservers.forEach((observer) {
+    // TODO performance may be fine since deactivate & dispose should not happen a lot.
+    activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.deactivate);
     });
     super.deactivate();
@@ -68,7 +71,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void dispose() {
-    activeObservers.forEach((observer) {
+    activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
     super.dispose();
@@ -80,7 +83,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
     super.setState(fn);
   }
 
-  final Set<ObserverHandler> activeObservers = <ObserverHandler>{};
+  final Set<ObserverHandler> activeObservers = LinkedHashSet<ObserverHandler>();
 }
 
 enum StateLifecyclePhase {
