@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'active_observers.dart';
+import 'observe_lifecycle.dart';
 import 'utils.dart';
 
 /// [effect] will be called in State's [initState].
@@ -13,22 +14,16 @@ ActiveObserver<void> observeEffect(VoidCallback Function() effect,
     [bool Function() isIdentical = alwaysReturnTrue]) {
   return (ActiveObservers host) {
     VoidCallback cancel;
-    host.activeObservers.add((phase) {
-      switch (phase) {
-        case StateLifecyclePhase.initState:
-          cancel = effect();
-          break;
-        case StateLifecyclePhase.didUpdateWidget:
-          if (isIdentical()) break;
-          cancel();
-          cancel = effect();
-          break;
-        case StateLifecyclePhase.dispose:
-          cancel();
-          break;
-        default:
-          {}
-      }
-    });
+    observeLifecycle(StateLifecyclePhase.initState, () {
+      cancel = effect();
+    })(host);
+    observeLifecycle(StateLifecyclePhase.didUpdateWidget, () {
+      if (isIdentical()) return;
+      cancel();
+      cancel = effect();
+    })(host);
+    observeLifecycle(StateLifecyclePhase.dispose, () {
+      cancel();
+    })(host);
   };
 }
