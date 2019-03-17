@@ -10,23 +10,24 @@ void main() {
     // TODO: check other exports
     test('should export expected active observers', () {
       expect(
-          observeEffect is ActiveObserver<void>
-              Function(VoidCallback Function(), [bool Function()]),
+          observeEffect is void Function(VoidCallback Function(),
+              [bool Function()]),
           true);
       expect(
-          observeListenable is ActiveObserver<void> Function(
+          observeLifecycle is void Function(
+              StateLifecyclePhase, void Function()),
+          true);
+      expect(
+          observeListenable is void Function(
               Listenable Function(), VoidCallback Function()),
           true);
+      expect(observeState is ObserveState<T> Function<T>(T Function()), true);
       expect(
-          observeState is ActiveObserver<ObserveState<T>> Function<T>(
-              T Function()),
+          observeStateWithValueListenable is ObserveState<T> Function<T>(
+              ValueListenable<T> Function()),
           true);
       expect(
-          observeStateWithValueListenable is ActiveObserver<ObserveState<T>>
-              Function<T>(ValueListenable<T> Function()),
-          true);
-      expect(
-          observeStream is ActiveObserver<void> Function<T>(
+          observeStream is void Function<T>(
               Stream<T> Function(), void Function(T)),
           true);
     });

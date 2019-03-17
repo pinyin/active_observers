@@ -75,7 +75,7 @@ class _TestObserveStreamState extends State<TestObserveStream>
       setState(() {
         state = 'error';
       });
-    })(this);
+    });
   }
 
   String state = '';

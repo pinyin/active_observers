@@ -40,3 +40,7 @@
 
 * Clean active observers on reassemble
 * Now all active observers must be placed in `assembleActiveObservers`
+
+## [0.4.0]
+
+* Use implicit this in active observers

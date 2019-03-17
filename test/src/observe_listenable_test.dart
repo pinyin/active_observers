@@ -69,7 +69,7 @@ class TestObserveListenable extends StatefulWidget {
 class _TestObserveListenableState extends State<TestObserveListenable>
     with ActiveObservers {
   assembleActiveObservers() {
-    observeListenable(() => widget.listenable, () => widget.report())(this);
+    observeListenable(() => widget.listenable, () => widget.report());
   }
 
   @override

@@ -1,15 +1,13 @@
 import 'package:active_observers/src/active_observers.dart';
 
 /// Create a value. Updating the value would cause [StatefulWidget] to rebuild.
-ActiveObserver<ObserveState<S>> observeState<S>(S getInitialValue()) {
-  return (ActiveObservers host) {
-    return ObserveState(getInitialValue, host);
-  };
+ObserveState<S> observeState<S>(S getInitialValue()) {
+  return ObserveState(getInitialValue);
 }
 
 class ObserveState<S> {
-  ObserveState(S getInitialValue(), ActiveObservers host) : _host = host {
-    host.activeObservers.add((phase) {
+  ObserveState(S getInitialValue()) : _host = currentHost {
+    currentHost.activeObservers.add((phase) {
       switch (phase) {
         case StateLifecyclePhase.initState:
           _value = getInitialValue();

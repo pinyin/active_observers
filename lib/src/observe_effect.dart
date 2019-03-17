@@ -10,20 +10,18 @@ import 'utils.dart';
 /// Whenever the widget is updated([didUpdateWidget]), if [isIdentical] returns false
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
-ActiveObserver<void> observeEffect(VoidCallback Function() effect,
+void observeEffect(VoidCallback Function() effect,
     [bool Function() isIdentical = alwaysReturnTrue]) {
-  return (ActiveObservers host) {
-    VoidCallback cancel;
-    observeLifecycle(StateLifecyclePhase.initState, () {
-      cancel = effect();
-    })(host);
-    observeLifecycle(StateLifecyclePhase.didUpdateWidget, () {
-      if (isIdentical()) return;
-      cancel();
-      cancel = effect();
-    })(host);
-    observeLifecycle(StateLifecyclePhase.dispose, () {
-      cancel();
-    })(host);
-  };
+  VoidCallback cancel;
+  observeLifecycle(StateLifecyclePhase.initState, () {
+    cancel = effect();
+  });
+  observeLifecycle(StateLifecyclePhase.didUpdateWidget, () {
+    if (isIdentical()) return;
+    cancel();
+    cancel = effect();
+  });
+  observeLifecycle(StateLifecyclePhase.dispose, () {
+    cancel();
+  });
 }

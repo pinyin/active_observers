@@ -39,7 +39,7 @@ class _TestObserveLifecycleState extends State<TestObserveLifecycle>
   @override
   assembleActiveObservers() {
     StateLifecyclePhase.values.forEach((phase) {
-      observeLifecycle(phase, () => widget.report(phase))(this);
+      observeLifecycle(phase, () => widget.report(phase));
     });
   }
 

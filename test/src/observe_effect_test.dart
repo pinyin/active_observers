@@ -58,7 +58,7 @@ class _TestObserveEffectState extends State<TestObserveEffect>
     observeEffect(() {
       widget.report(Report.EffectStart);
       return () => {widget.report(Report.EffectCleanUp)};
-    }, () => widget.isIdentical)(this);
+    }, () => widget.isIdentical);
   }
 
   @override
