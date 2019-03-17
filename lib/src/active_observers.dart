@@ -59,6 +59,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
     activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
+    activeObservers.clear();
     assembleActiveObservers();
     activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.initState);

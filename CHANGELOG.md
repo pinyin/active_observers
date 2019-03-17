@@ -34,4 +34,9 @@
 
 ## [0.3.3]
 
-* add `assembleActiveObservers` slot
+* Add `assembleActiveObservers` slot
+
+## [0.3.4]
+
+* Clean active observers on reassemble
+* Now all active observers must be placed in `assembleActiveObservers`

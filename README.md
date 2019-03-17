@@ -18,7 +18,8 @@ class TestObserveState extends StatefulWidget {
 
 class _TestObserveStateState extends State<TestObserveState>
     with ActiveObservers { // 2. Add a mixin to your State
-  _TestObserveStateState() {
+  @override
+  assembleActiveObservers() {
     state = observeState('a')(this); // 3. Setup active observers in constructor
   }
 
