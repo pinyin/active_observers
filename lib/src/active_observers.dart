@@ -86,12 +86,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  // expose setState as public method
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-  }
-
   final Set<ObserverHandler> activeObservers = LinkedHashSet<ObserverHandler>();
 }
 

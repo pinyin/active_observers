@@ -21,11 +21,6 @@ void main() {
           observeListenable is void Function(
               Listenable Function(), VoidCallback Function()),
           true);
-      expect(observeState is ObserveState<T> Function<T>(T Function()), true);
-      expect(
-          observeStateWithValueListenable is ObserveState<T> Function<T>(
-              ValueListenable<T> Function()),
-          true);
       expect(
           observeStream is void Function<T>(
               Stream<T> Function(), void Function(T)),

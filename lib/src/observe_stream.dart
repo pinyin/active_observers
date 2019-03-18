@@ -7,6 +7,6 @@ void observeStream<T>(Stream<T> getStream(), void onData(T event),
   Stream<T> stream;
   return observeEffect(() {
     stream = getStream();
-    return getStream().listen(onData, onError: onError, onDone: onDone).cancel;
+    return stream.listen(onData, onError: onError, onDone: onDone).cancel;
   }, () => stream == getStream());
 }
