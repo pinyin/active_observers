@@ -16,6 +16,11 @@ void observeEffect(VoidCallback Function() effect,
   observeLifecycle(StateLifecyclePhase.initState, () {
     cancel = effect();
   });
+  observeLifecycle(StateLifecyclePhase.didChangeDependencies, () {
+    if (isIdentical()) return;
+    cancel();
+    cancel = effect();
+  });
   observeLifecycle(StateLifecyclePhase.didUpdateWidget, () {
     if (isIdentical()) return;
     cancel();
