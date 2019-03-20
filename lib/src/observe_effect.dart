@@ -13,20 +13,22 @@ import 'utils.dart';
 void observeEffect(VoidCallback Function() effect,
     [bool Function() isIdentical = alwaysReturnTrue]) {
   VoidCallback cancel;
-  observeLifecycle(StateLifecyclePhase.initState, () {
-    cancel = effect();
-  });
-  observeLifecycle(StateLifecyclePhase.didChangeDependencies, () {
-    if (isIdentical()) return;
-    cancel();
-    cancel = effect();
-  });
-  observeLifecycle(StateLifecyclePhase.didUpdateWidget, () {
-    if (isIdentical()) return;
-    cancel();
-    cancel = effect();
-  });
-  observeLifecycle(StateLifecyclePhase.dispose, () {
-    cancel();
+  observeLifecycle((phase) {
+    switch (phase) {
+      case StateLifecyclePhase.initState:
+        cancel = effect();
+        break;
+      case StateLifecyclePhase.didChangeDependencies:
+      case StateLifecyclePhase.didUpdateWidget:
+        if (isIdentical()) return;
+        cancel();
+        cancel = effect();
+        break;
+      case StateLifecyclePhase.dispose:
+        cancel();
+        break;
+      default:
+        {}
+    }
   });
 }

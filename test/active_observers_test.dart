@@ -14,8 +14,7 @@ void main() {
               [bool Function()]),
           true);
       expect(
-          observeLifecycle is void Function(
-              StateLifecyclePhase, void Function()),
+          observeLifecycle is void Function(void Function(StateLifecyclePhase)),
           true);
       expect(
           observeListenable is void Function(

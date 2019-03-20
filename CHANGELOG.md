@@ -48,3 +48,7 @@
 ## [0.4.1]
 
 * Mark `assembleActiveObservers` as virtual
+
+## [0.5.0]
+
+* Update `observeLifecycle` interface
