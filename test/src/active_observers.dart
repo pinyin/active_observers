@@ -56,11 +56,12 @@ class _TestObserveOrderState extends State<TestObserveOrder>
     with ActiveObservers {
   // TODO find a way to test reassemble
 
+  @override
   assembleActiveObservers() {
-    activeObservers.add((phase) {
+    observers.add((phase) {
       widget.report(Report(1, phase));
     });
-    activeObservers.add((phase) {
+    observers.add((phase) {
       widget.report(Report(2, phase));
     });
   }

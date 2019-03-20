@@ -26,10 +26,10 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void initState() {
     super.initState();
-    currentHost = this;
+    observers = this._activeObservers;
     assembleActiveObservers();
-    currentHost = null;
-    activeObservers.forEach((observer) {
+    observers = null;
+    _activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.initState);
     });
   }
@@ -38,7 +38,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
-    activeObservers.forEach((observer) {
+    _activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.didUpdateWidget);
     });
   }
@@ -47,7 +47,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void didChangeDependencies() {
     super.didChangeDependencies();
-    activeObservers.forEach((observer) {
+    _activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.didChangeDependencies);
     });
   }
@@ -56,14 +56,14 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void reassemble() {
     super.reassemble();
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    _activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
-    activeObservers.clear();
-    currentHost = this;
+    _activeObservers.clear();
+    observers = this._activeObservers;
     assembleActiveObservers();
-    currentHost = null;
-    activeObservers.forEach((observer) {
+    observers = null;
+    _activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.initState);
     });
   }
@@ -71,7 +71,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void deactivate() {
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    _activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.deactivate);
     });
     super.deactivate();
@@ -80,13 +80,14 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void dispose() {
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    _activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
     super.dispose();
   }
 
-  final Set<ObserverHandler> activeObservers = LinkedHashSet<ObserverHandler>();
+  final Set<ObserverHandler> _activeObservers =
+      LinkedHashSet<ObserverHandler>();
 }
 
 enum StateLifecyclePhase {
@@ -99,4 +100,4 @@ enum StateLifecyclePhase {
 
 typedef ObserverHandler<T> = T Function(StateLifecyclePhase phase);
 
-ActiveObservers currentHost;
+Set<ObserverHandler> observers;
