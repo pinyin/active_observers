@@ -44,3 +44,7 @@
 ## [0.4.0]
 
 * Use implicit this in active observers
+
+## [0.4.1]
+
+* Mark `assembleActiveObservers` as virtual

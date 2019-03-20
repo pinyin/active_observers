@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 /// A type of observers that subscribes itself actively to the target [State].
 /// Like ordinary observers, an active observer listens from one or many observables
@@ -21,7 +20,6 @@ import 'package:meta/meta.dart';
 /// Inspired by React hooks.
 /// In this case, the [observable] being observed is a Flutter [StatefulWidget] [State].
 mixin ActiveObservers<T extends StatefulWidget> on State<T> {
-  @virtual
   void assembleActiveObservers();
 
   @override
