@@ -21,11 +21,11 @@ void observeEffect(VoidCallback Function() effect,
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
         if (isIdentical()) return;
-        cancel();
+        if (cancel != null) cancel();
         cancel = effect();
         break;
       case StateLifecyclePhase.dispose:
-        cancel();
+        if (cancel != null) cancel();
         break;
       default:
         {}
