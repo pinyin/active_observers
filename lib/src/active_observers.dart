@@ -2,23 +2,22 @@ import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 
-/// A type of observers that subscribes itself actively to the target [State].
+/// A type of observers that subscribes itself to the target [State]'s lifecycle.
 /// Like ordinary observers, an active observer listens from one or many observables
-/// and reactive to the events, but the subscription is done by the active observer
-/// rather than the observable. After subscription, data flows from the observable
-/// to the active observer.
+/// and reactive to the events, but the subscription is managed by the active observer
+/// rather than the observable. After subscription, data still flows from the observable
+/// to the observer.
 /// The word "active" means the observer acts actively, rather than "passively":
 /// ```dart
 /// // passively:
 /// observable.addListener(observer)
 /// // actively:
-/// observer.listenTo(observable)
-/// observer(observable) // when lambda is supported
+/// observer(observable)
 /// ```
-/// Active observers pattern allows us to compose observers in a scalable way and
+/// Active Observers pattern allows us to compose observers in a scalable way and
 /// make observers much more powerful.
 /// Inspired by React hooks.
-/// In this case, the [observable] being observed is a Flutter [StatefulWidget] [State].
+/// In this case, the observable being observed is a Flutter [StatefulWidget] [State].
 mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   void assembleActiveObservers();
 

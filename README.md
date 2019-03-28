@@ -10,7 +10,9 @@ A new way to create composable UI logic, inspired by React hooks.
 import 'package:active_observers/active_observers.dart'; // 1.import package
 
 class TestObserveState extends StatefulWidget {
-  TestObserveState();
+  TestObserveState(this.stream);
+  
+  final Stream<String> stream;
 
   @override
   _TestObserveStateState createState() => _TestObserveStateState();
@@ -20,15 +22,19 @@ class _TestObserveStateState extends State<TestObserveState>
     with ActiveObservers { // 2. Add a mixin to your State
   @override
   assembleActiveObservers() {
-    state = observeState('a'); // 3. Setup active observers in constructor
+    // 3. Setup active observers in constructor
+    observeStream(()=> widget.stream, (v){
+      setState((){
+        value = v;
+      });
+    });
   }
 
-  ObserveState<String> state;
+  String value;
 
   @override
   Widget build(BuildContext context) {
-    // 3. Get & set value. The widget will be automatically rebuilt.
-    return Text(state.value, textDirection: TextDirection.ltr);
+    return Text(value, textDirection: TextDirection.ltr);
   }
 }
 ```
