@@ -2,6 +2,8 @@
 
 Example app for Dart package active_observers.
 
+![DEMO](https://github.com/pinyin/active_observers/raw/master/demo.gif)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
