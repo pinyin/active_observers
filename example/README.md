@@ -2,7 +2,7 @@
 
 Example app for Dart package active_observers.
 
-![DEMO](https://github.com/pinyin/active_observers/raw/master/demo.gif)
+![DEMO](https://github.com/pinyin/active_observers/raw/master/example/demo.gif)
 
 ## Getting Started
 
