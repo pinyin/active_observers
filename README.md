@@ -22,7 +22,8 @@ class _TestObserveStateState extends State<TestObserveState>
     with ActiveObservers { // 2. Add a mixin to your State
   @override
   assembleActiveObservers() {
-    // 3. Setup active observers in constructor
+    // 3. Setup active observers in assembleActiveObservers
+    // codes in this method will be executed on hot reload
     observeStream(()=> widget.stream, (v){
       setState((){
         value = v;
