@@ -58,7 +58,7 @@ class _ItemsState extends State<Items>
               .elementAt(t)
               .map((p) => p.pixels)
               .startWith(scrollControllers[t].initialScrollOffset))
-          .map((o) => o != 0)
+          .map((o) => o > kToolbarHeight)
           .distinct();
 
       observeStream(() => shouldElevate$, (shouldElevate) {
