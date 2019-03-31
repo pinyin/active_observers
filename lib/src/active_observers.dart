@@ -53,6 +53,16 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
 
   @override
   @mustCallSuper
+  @protected
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    _activeObservers.forEach((observer) {
+      observer(StateLifecyclePhase.setState);
+    });
+  }
+
+  @override
+  @mustCallSuper
   void reassemble() {
     super.reassemble();
     _activeObservers.toList(growable: false).reversed.forEach((observer) {
@@ -93,6 +103,7 @@ enum StateLifecyclePhase {
   initState,
   didUpdateWidget,
   didChangeDependencies,
+  setState,
   deactivate,
   dispose,
 }
