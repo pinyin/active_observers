@@ -11,7 +11,7 @@ void main() {
     test('should export expected active observers', () {
       expect(
           observeEffect is void Function(VoidCallback Function(),
-              [bool Function()]),
+              {bool Function() restartWhen}),
           true);
       expect(
           observeLifecycle is void Function(void Function(StateLifecyclePhase)),
@@ -19,6 +19,10 @@ void main() {
       expect(
           observeListenable is void Function(
               Listenable Function(), VoidCallback Function()),
+          true);
+      expect(
+          observePaint is void Function(VoidCallback Function(),
+              {bool Function() rerunWhen}),
           true);
       expect(
           observeStream is void Function<T>(
