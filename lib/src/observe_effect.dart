@@ -19,6 +19,7 @@ void observeEffect(VoidCallback Function() effect,
         break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
+      case StateLifecyclePhase.setState:
         if (isIdentical == null || isIdentical()) return;
         if (cancel != null) cancel();
         cancel = effect();
