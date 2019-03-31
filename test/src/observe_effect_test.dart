@@ -1,5 +1,4 @@
 import 'package:active_observers/active_observers.dart';
-import 'package:active_observers/src/active_observers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,7 +16,7 @@ void main() {
       report.clear();
     });
 
-    testWidgets('should restart iff identical() returns false after update',
+    testWidgets('should restart iff restartWhen returns true after update',
         (tester) async {
       List<Report> report = [];
       await tester.pumpWidget(TestObserveEffect((phase) {
@@ -58,7 +57,7 @@ class _TestObserveEffectState extends State<TestObserveEffect>
     observeEffect(() {
       widget.report(Report.EffectStart);
       return () => {widget.report(Report.EffectCleanUp)};
-    }, () => widget.isIdentical);
+    }, restartWhen: () => !widget.isIdentical);
   }
 
   @override

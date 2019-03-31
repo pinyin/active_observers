@@ -57,7 +57,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   void setState(VoidCallback fn) {
     super.setState(fn);
     _activeObservers.forEach((observer) {
-      observer(StateLifecyclePhase.setState);
+      observer(StateLifecyclePhase.didSetState);
     });
   }
 
@@ -103,7 +103,7 @@ enum StateLifecyclePhase {
   initState,
   didUpdateWidget,
   didChangeDependencies,
-  setState,
+  didSetState,
   deactivate,
   dispose,
 }

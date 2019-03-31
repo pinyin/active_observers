@@ -1,16 +1,15 @@
 import 'dart:ui';
 
-import 'active_observers.dart';
 import 'observe_lifecycle.dart';
 
 /// [effect] will be called in State's [initState].
 /// [effect] should return a callback that will be called in [dispose]. Typically,
 /// the callback should contain [effect]'s clean up logic.
-/// Whenever the widget is updated([didUpdateWidget]), if [isIdentical] returns false
+/// Whenever the widget is updated([didUpdateWidget]), if [restartWhen] returns false
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 void observeEffect(VoidCallback Function() effect,
-    [bool Function() isIdentical]) {
+    {bool Function() restartWhen}) {
   VoidCallback cancel;
   observeLifecycle((phase) {
     switch (phase) {
@@ -19,10 +18,11 @@ void observeEffect(VoidCallback Function() effect,
         break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
-      case StateLifecyclePhase.setState:
-        if (isIdentical == null || isIdentical()) return;
-        if (cancel != null) cancel();
-        cancel = effect();
+      case StateLifecyclePhase.didSetState:
+        if (restartWhen != null && restartWhen()) {
+          if (cancel != null) cancel();
+          cancel = effect();
+        }
         break;
       case StateLifecyclePhase.dispose:
         if (cancel != null) cancel();

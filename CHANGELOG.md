@@ -56,3 +56,10 @@
 ## [0.5.1]
 
 * Add example
+
+## [0.6.0]
+
+* Add `didSetState` lifecycle
+* `observeEffect` now receive a function to decide when to restart
+* `observeEffect` now may restart effect in setState
+* Add `observePaint` observer

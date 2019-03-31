@@ -12,5 +12,5 @@ void observeListenable(Listenable getListenable(), VoidCallback callback) {
     return () {
       listenable.removeListener(callback);
     };
-  }, () => listenable == getListenable());
+  }, restartWhen: () => listenable != getListenable());
 }

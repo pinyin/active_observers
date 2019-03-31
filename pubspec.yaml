@@ -1,6 +1,6 @@
 name: active_observers
 description: A new way to create composable UI logic, inspired by React hooks.
-version: 0.5.1
+version: 0.6.0
 author: Bo Bao <bob432091@gmail.com>
 homepage: https://github.com/pinyin/active_observers
 

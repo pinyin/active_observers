@@ -33,7 +33,7 @@ class _RouterState extends NavigatorState with ActiveObservers {
   void assembleActiveObservers() {
     observeEffect(() {
       widget.controller.value = this;
-    }, () => widget.controller.value != null);
+    }, restartWhen: () => widget.controller.value == null);
   }
 }
 

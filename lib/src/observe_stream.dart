@@ -8,5 +8,5 @@ void observeStream<T>(Stream<T> getStream(), void onData(T event),
   return observeEffect(() {
     stream = getStream();
     return stream.listen(onData, onError: onError, onDone: onDone).cancel;
-  }, () => stream == getStream());
+  }, restartWhen: () => stream != getStream());
 }
