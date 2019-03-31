@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'active_observers.dart';
 import 'observe_lifecycle.dart';
-import 'utils.dart';
 
 /// [effect] will be called in State's [initState].
 /// [effect] should return a callback that will be called in [dispose]. Typically,
@@ -11,7 +10,7 @@ import 'utils.dart';
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 void observeEffect(VoidCallback Function() effect,
-    [bool Function() isIdentical = alwaysReturnTrue]) {
+    [bool Function() isIdentical]) {
   VoidCallback cancel;
   observeLifecycle((phase) {
     switch (phase) {
@@ -20,7 +19,7 @@ void observeEffect(VoidCallback Function() effect,
         break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
-        if (isIdentical()) return;
+        if (isIdentical == null || isIdentical()) return;
         if (cancel != null) cancel();
         cancel = effect();
         break;
