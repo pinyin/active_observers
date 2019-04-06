@@ -1,30 +1,16 @@
-import 'package:collection/collection.dart';
-
 import './observe_effect.dart';
+import './utils.dart';
 
-T Function() observeMemo<T>(T compute(),
-    {bool recomputeWhen(), Iterable deps()}) {
-  Iterable latestDeps = deps != null ? deps() : null;
-  T latestValue;
+Memo<T> observeMemo<T>(T compute(), {bool recomputeWhen(), Iterable deps()}) {
+  final notifier = MemoImpl<T>(compute());
 
   observeEffect(
     () {
-      latestValue = compute();
+      notifier.value = compute();
     },
-    restartWhen: () {
-      final isForcingRecompute =
-          recomputeWhen != null ? recomputeWhen() : false;
-      var hasDepsUpdated = false;
-      if (deps != null) {
-        final currentDeps = deps();
-        hasDepsUpdated = !equals(latestDeps, currentDeps);
-        latestDeps = currentDeps;
-      }
-      return isForcingRecompute || hasDepsUpdated;
-    },
+    restartWhen: recomputeWhen,
+    deps: deps,
   );
 
-  return () => latestValue;
+  return notifier;
 }
-
-final equals = const IterableEquality().equals;

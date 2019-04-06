@@ -63,16 +63,16 @@ class TestObserveMemo extends StatefulWidget {
 class _TestObserveMemoState extends State<TestObserveMemo>
     with ActiveObservers {
   assembleActiveObservers() {
-    getMemo = observeMemo(() {
+    memo = observeMemo(() {
       widget.onCompute();
       return widget.value;
     }, deps: () => [widget.value], recomputeWhen: () => widget.recomputeWhen());
   }
 
-  String Function() getMemo;
+  ValueListenable<String> memo;
 
   @override
   Widget build(BuildContext context) {
-    return Text(getMemo(), textDirection: TextDirection.ltr);
+    return Text(memo.value, textDirection: TextDirection.ltr);
   }
 }
