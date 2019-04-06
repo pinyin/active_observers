@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
+
 import 'observe_lifecycle.dart';
 
 /// [effect] will be called in State's [initState].
@@ -9,17 +11,26 @@ import 'observe_lifecycle.dart';
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 void observeEffect(VoidCallback Function() effect,
-    {bool Function() restartWhen}) {
+    {bool restartWhen(), Iterable deps()}) {
   VoidCallback cancel;
+  Iterable latestDeps;
   observeLifecycle((phase) {
     switch (phase) {
       case StateLifecyclePhase.initState:
         cancel = effect();
+        latestDeps = deps != null ? deps() : null;
         break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
       case StateLifecyclePhase.didSetState:
-        if (restartWhen != null && restartWhen()) {
+        final isForcingRestart = restartWhen != null ? restartWhen() : false;
+        var hasDepsUpdated = false;
+        if (deps != null) {
+          final currentDeps = deps();
+          hasDepsUpdated = !equals(latestDeps, currentDeps);
+          latestDeps = currentDeps;
+        }
+        if (isForcingRestart || hasDepsUpdated) {
           if (cancel != null) cancel();
           cancel = effect();
         }
@@ -32,3 +43,5 @@ void observeEffect(VoidCallback Function() effect,
     }
   });
 }
+
+final equals = const IterableEquality().equals;
