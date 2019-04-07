@@ -58,10 +58,10 @@ class _TestObserveOrderState extends State<TestObserveOrder>
 
   @override
   assembleActiveObservers() {
-    observers.add((phase) {
+    activeObservers.add((phase) {
       widget.report(Report(1, phase));
     });
-    observers.add((phase) {
+    activeObservers.add((phase) {
       widget.report(Report(2, phase));
     });
   }
