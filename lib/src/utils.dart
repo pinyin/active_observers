@@ -39,7 +39,7 @@ class MemoController<T> extends ValueNotifier<T> implements Memo<T> {
 
   @override
   Future<T> catchError(Function onError, {bool Function(Object error) test}) {
-    return null;
+    return this;
   }
 
   @override
