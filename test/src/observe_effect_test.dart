@@ -4,12 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('observeEffect', () {
-    testWidgets('should run between initState & dispose', (tester) async {
+    testWidgets('should run after initState', (tester) async {
       List<Report> report = [];
       await tester.pumpWidget(TestObserveEffect((phase) {
         report.add(phase);
       }));
-      expect(report, [Report.EffectStart, Report.InitState]);
+      expect(report, [Report.InitState, Report.EffectStart]);
       report.clear();
       await tester.pumpWidget(Container());
       expect(report, [Report.Dispose, Report.EffectCleanUp]);

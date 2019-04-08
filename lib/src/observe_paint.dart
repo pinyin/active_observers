@@ -20,11 +20,10 @@ void observePaint(void callback(), {bool Function() rerunWhen}) {
     });
   }
 
+  scheduleCallback();
+
   observeLifecycle((lifecycle) {
     switch (lifecycle) {
-      case StateLifecyclePhase.initState:
-        scheduleCallback();
-        break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
       case StateLifecyclePhase.didSetState:

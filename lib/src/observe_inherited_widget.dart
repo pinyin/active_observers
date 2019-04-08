@@ -6,7 +6,8 @@ import './utils.dart';
 
 Memo<T> observeInheritedWidget<T extends InheritedWidget>([T orElse()]) {
   final target = activeObservable;
-  final result = MemoController<T>(null);
+  final result = MemoController<T>(
+      target.context.inheritFromWidgetOfExactType(T) ?? orElse());
 
   observeLifecycle((phase) {
     if (phase == StateLifecyclePhase.didChangeDependencies) {

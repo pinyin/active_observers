@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:active_observers/src/utils.dart';
 import 'package:flutter/widgets.dart';
 
 /// A type of observers that subscribes itself to the target [State]'s lifecycle.
@@ -23,18 +24,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
 
   @override
   @mustCallSuper
-  void initState() {
-    super.initState();
-    activeObservable = this;
-    assembleActiveObservers();
-    activeObservable = null;
-    activeObservers.forEach((observer) {
-      observer(StateLifecyclePhase.initState);
-    });
-  }
-
-  @override
-  @mustCallSuper
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
     activeObservers.forEach((observer) {
@@ -45,6 +34,16 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void didChangeDependencies() {
+    if (!_didInitialized.value) {
+      // FIXME hack: Flutter doesn't allow accessing inheritedWidget in initState()
+      activeObservable = this;
+      assembleActiveObservers();
+      activeObservable = null;
+      activeObservers.forEach((observer) {
+        observer(StateLifecyclePhase.initState);
+      });
+      _didInitialized.value = true;
+    }
     super.didChangeDependencies();
     activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.didChangeDependencies);
@@ -96,6 +95,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   }
 
   final Set<ObserverHandler> activeObservers = LinkedHashSet<ObserverHandler>();
+  final Ref<bool> _didInitialized = Ref(false);
 }
 
 enum StateLifecyclePhase {

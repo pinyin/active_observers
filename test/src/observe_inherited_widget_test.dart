@@ -18,22 +18,25 @@ void main() {
       expect(find.text('b'), findsOneWidget);
     });
     testWidgets('should emit value iff widget is updated', (tester) async {
-      var buildCount = 0;
-      await tester
-          .pumpWidget(TestObserverInheritedWidget(onValue: () => buildCount++));
-      expect(buildCount, 1);
+      var updateCount = 0;
+      await tester.pumpWidget(
+          TestObserverInheritedWidget(onValue: () => updateCount++));
+      expect(updateCount, 0);
       await tester.pumpWidget(InheritedWidgetExample(
-          'a', TestObserverInheritedWidget(onValue: () => buildCount++)));
-      expect(buildCount, 2);
+          'a', TestObserverInheritedWidget(onValue: () => updateCount++)));
+      expect(updateCount, 0);
+      await tester.pumpWidget(InheritedWidgetExample(
+          'b', TestObserverInheritedWidget(onValue: () => updateCount++)));
+      expect(updateCount, 1);
       final widget = InheritedWidgetExample(
-          'a', TestObserverInheritedWidget(onValue: () => buildCount++),
+          'a', TestObserverInheritedWidget(onValue: () => updateCount++),
           key: GlobalKey());
       await tester.pumpWidget(widget);
-      expect(buildCount, 3);
+      expect(updateCount, 1);
       await tester.pumpWidget(InheritedWidgetExample('b', widget));
-      expect(buildCount, 3);
+      expect(updateCount, 1);
       await tester.pumpWidget(widget);
-      expect(buildCount, 3);
+      expect(updateCount, 1);
     });
   });
 }
@@ -65,8 +68,8 @@ class _TestObserverInheritedWidgetState
     extends State<TestObserverInheritedWidget> with ActiveObservers {
   @override
   void assembleActiveObservers() {
-    final inherited = observeInheritedWidget(
-        () => InheritedWidgetExample('default', Container()));
+    final inherited = observeInheritedWidget(() => defaultDeps);
+    value = inherited.value.value;
     observeListenable(() => inherited, () {
       if (widget.onValue != null) widget.onValue();
       value = inherited.value.value;
@@ -80,3 +83,5 @@ class _TestObserverInheritedWidgetState
     return Text(value, textDirection: TextDirection.ltr);
   }
 }
+
+final defaultDeps = InheritedWidgetExample('default', Container());

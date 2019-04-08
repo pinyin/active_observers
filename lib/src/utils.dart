@@ -13,3 +13,9 @@ class MemoController<T> extends ValueNotifier<T> implements Memo<T> {
 
   call() => this.value;
 }
+
+class Ref<T> {
+  T value;
+
+  Ref(this.value);
+}

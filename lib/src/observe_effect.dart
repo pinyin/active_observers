@@ -12,14 +12,10 @@ import 'observe_lifecycle.dart';
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 void observeEffect(VoidCallback Function() effect,
     {bool restartWhen(), Iterable deps()}) {
-  VoidCallback cancel;
-  Iterable latestDeps;
+  VoidCallback cancel = effect();
+  Iterable latestDeps = deps != null ? deps() : null;
   observeLifecycle((phase) {
     switch (phase) {
-      case StateLifecyclePhase.initState:
-        cancel = effect();
-        latestDeps = deps != null ? deps() : null;
-        break;
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
       case StateLifecyclePhase.didSetState:
