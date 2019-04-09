@@ -1,3 +1,5 @@
+import 'package:active_observers/active_observers.dart';
+
 import './observe_effect.dart';
 import './utils.dart';
 

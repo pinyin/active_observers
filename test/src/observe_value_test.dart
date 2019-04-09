@@ -10,39 +10,22 @@ void main() {
       var computeCount = 0;
       await tester.pumpWidget(TestObserveValue(
         value: 'a',
-        recomputeWhen: () => false,
         onCompute: () => computeCount++,
       ));
       expect(find.text('a'), findsOneWidget);
+      expect(computeCount, 0);
+      await tester.pumpWidget(TestObserveValue(
+        value: 'b',
+        onCompute: () => computeCount++,
+      ));
+      expect(find.text('b'), findsOneWidget);
       expect(computeCount, 1);
       await tester.pumpWidget(TestObserveValue(
         value: 'b',
-        recomputeWhen: () => false,
         onCompute: () => computeCount++,
       ));
       expect(find.text('b'), findsOneWidget);
-      expect(computeCount, 2);
-      await tester.pumpWidget(TestObserveValue(
-        value: 'b',
-        recomputeWhen: () => false,
-        onCompute: () => computeCount++,
-      ));
-      expect(find.text('b'), findsOneWidget);
-      expect(computeCount, 2);
-      await tester.pumpWidget(TestObserveValue(
-        value: 'b',
-        recomputeWhen: () => true,
-        onCompute: () => computeCount++,
-      ));
-      expect(find.text('b'), findsOneWidget);
-      expect(computeCount, 3);
-      await tester.pumpWidget(TestObserveValue(
-        value: 'b',
-        recomputeWhen: () => false,
-        onCompute: () => computeCount++,
-      ));
-      expect(find.text('b'), findsOneWidget);
-      expect(computeCount, 3);
+      expect(computeCount, 1);
     });
   });
 }
@@ -64,9 +47,9 @@ class _TestObserveValueState extends State<TestObserveValue>
     with ActiveObservers {
   assembleActiveObservers() {
     memo = observeValue(() {
-      widget.onCompute();
       return widget.value;
-    }, deps: () => [widget.value], recomputeWhen: () => widget.recomputeWhen());
+    }, deps: () => [widget.value]);
+    memo.addListener(widget.onCompute);
   }
 
   ValueListenable<String> memo;
