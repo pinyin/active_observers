@@ -10,8 +10,6 @@ void main() {
       await tester.pumpWidget(TestObserveOrder(report: reports.add));
       expect(reports.map((r) => r.order), [1, 2, 1, 2]);
       expect(reports.map((r) => r.phase), [
-        StateLifecyclePhase.initState,
-        StateLifecyclePhase.initState,
         StateLifecyclePhase.didChangeDependencies,
         StateLifecyclePhase.didChangeDependencies,
       ]);

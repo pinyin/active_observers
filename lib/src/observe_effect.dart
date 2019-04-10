@@ -15,27 +15,22 @@ void observeEffect(VoidCallback Function() effect,
   VoidCallback cancel = effect();
   Iterable latestDeps = deps != null ? deps() : null;
 
-  void restartIfNecessary() {
-    final isForcingRestart = restartWhen != null ? restartWhen() : false;
-    var hasDepsUpdated = false;
-    if (deps != null) {
-      final currentDeps = deps();
-      hasDepsUpdated = !equals(latestDeps, currentDeps);
-      latestDeps = currentDeps;
-    }
-    if (isForcingRestart || hasDepsUpdated) {
-      if (cancel != null) cancel();
-      cancel = effect();
-    }
-  }
-
   observeLifecycle((phase) {
     switch (phase) {
-      case StateLifecyclePhase.initState:
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
       case StateLifecyclePhase.didSetState:
-        restartIfNecessary();
+        final isForcingRestart = restartWhen != null ? restartWhen() : false;
+        var hasDepsUpdated = false;
+        if (deps != null) {
+          final currentDeps = deps();
+          hasDepsUpdated = !equals(latestDeps, currentDeps);
+          latestDeps = currentDeps;
+        }
+        if (isForcingRestart || hasDepsUpdated) {
+          if (cancel != null) cancel();
+          cancel = effect();
+        }
         break;
       case StateLifecyclePhase.dispose:
         if (cancel != null) cancel();

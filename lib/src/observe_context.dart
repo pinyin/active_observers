@@ -8,17 +8,12 @@ Memo<T> observeContext<T>(T Function(BuildContext) dependency) {
   final target = activeObservable;
   final result = MemoController<T>(dependency(target.context));
 
-  void forwardContextIfUpdated() {
-    final currentDependency = dependency(target.context);
-    if (currentDependency == result.value) return;
-    result.value = currentDependency;
-  }
-
   observeLifecycle((phase) {
     switch (phase) {
-      case StateLifecyclePhase.initState:
       case StateLifecyclePhase.didChangeDependencies:
-        forwardContextIfUpdated();
+        final currentDependency = dependency(target.context);
+        if (currentDependency == result.value) return;
+        result.value = currentDependency;
         break;
       default:
         break;

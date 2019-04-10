@@ -9,10 +9,7 @@ void main() {
         (tester) async {
       List<StateLifecyclePhase> report = [];
       await tester.pumpWidget(TestObserveLifecycle(report.add));
-      expect(report, [
-        StateLifecyclePhase.initState,
-        StateLifecyclePhase.didChangeDependencies
-      ]);
+      expect(report, [StateLifecyclePhase.didChangeDependencies]);
       report.clear();
       await tester.pumpWidget(TestObserveLifecycle((v) => report.add(v)));
       expect(report, [StateLifecyclePhase.didUpdateWidget]);
