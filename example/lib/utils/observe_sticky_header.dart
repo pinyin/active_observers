@@ -24,7 +24,7 @@ AnimationController observeStickyHeader(
   final Observable<double> scrollDiff$ = Observable.merge(scrollers
       .map((p$) => p$.transform(StreamTransformer.fromBind(diffScroll))));
 
-  observeStream(() => scrollDiff$, (double diff) {
+  observeStream(() => scrollDiff$, onData: (double diff) {
     controller.value = controller.value - diff / kToolbarHeight;
   });
 

@@ -41,9 +41,9 @@ class _ItemsState extends State<Items>
             .shareReplay(maxSize: 1));
     // keep latest currentTab & scrollPosition
     {
-      observeStream(() => currentTab$, (t) {});
+      observeStream(() => currentTab$);
       scrollPositions.forEach((s) {
-        observeStream(() => s, (s) {});
+        observeStream(() => s);
       });
     }
 
@@ -61,7 +61,7 @@ class _ItemsState extends State<Items>
           .map((o) => o > kToolbarHeight)
           .distinct();
 
-      observeStream(() => shouldElevate$, (shouldElevate) {
+      observeStream(() => shouldElevate$, onData: (shouldElevate) {
         elevateToolbar.value = shouldElevate ? 1 : 0;
       });
     }
@@ -76,7 +76,8 @@ class _ItemsState extends State<Items>
           .where((d) => d != ScrollDirection.idle)
           .map((d) => d == ScrollDirection.reverse);
 
-      observeStream(() => shouldRequestFullView$, (bool shouldRequestFullView) {
+      observeStream(() => shouldRequestFullView$,
+          onData: (bool shouldRequestFullView) {
         if (widget.onNeedFullView != null)
           widget.onNeedFullView(shouldRequestFullView);
       });
