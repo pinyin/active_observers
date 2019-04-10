@@ -35,7 +35,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @mustCallSuper
   void didChangeDependencies() {
     if (!_didInitialized.value) {
-      // FIXME hack: Flutter doesn't allow accessing inheritedWidget in initState()
+      // FIXME hack: Flutter doesn't allow accessing InheritedWidget in initState()
       activeObservable = this;
       assembleActiveObservers();
       activeObservable = null;
@@ -63,7 +63,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   void reassemble() {
-    super.reassemble();
     activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
@@ -74,6 +73,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
     activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.initState);
     });
+    super.reassemble();
   }
 
   @override

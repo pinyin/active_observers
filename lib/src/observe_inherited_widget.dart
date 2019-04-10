@@ -9,12 +9,20 @@ Memo<T> observeInheritedWidget<T extends InheritedWidget>([T orElse()]) {
   final result = MemoController<T>(
       target.context.inheritFromWidgetOfExactType(T) ?? orElse());
 
+  void forwardWidgetIfUpdated() {
+    final T widget = target.context.inheritFromWidgetOfExactType(T) ?? orElse();
+    if (widget == result.value) return;
+    result.value = widget;
+  }
+
   observeLifecycle((phase) {
-    if (phase == StateLifecyclePhase.didChangeDependencies) {
-      final T widget =
-          target.context.inheritFromWidgetOfExactType(T) ?? orElse();
-      if (widget == result.value) return;
-      result.value = widget;
+    switch (phase) {
+      case StateLifecyclePhase.initState:
+      case StateLifecyclePhase.didChangeDependencies:
+        forwardWidgetIfUpdated();
+        break;
+      default:
+        break;
     }
   });
 
