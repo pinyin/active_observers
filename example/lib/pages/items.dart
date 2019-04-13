@@ -61,7 +61,7 @@ class _ItemsState extends State<Items>
           .map((o) => o > kToolbarHeight)
           .distinct();
 
-      observeStream(() => shouldElevate$, onData: (shouldElevate) {
+      observeStream(() => shouldElevate$).listen((shouldElevate) {
         elevateToolbar.value = shouldElevate ? 1 : 0;
       });
     }
@@ -76,8 +76,8 @@ class _ItemsState extends State<Items>
           .where((d) => d != ScrollDirection.idle)
           .map((d) => d == ScrollDirection.reverse);
 
-      observeStream(() => shouldRequestFullView$,
-          onData: (bool shouldRequestFullView) {
+      observeStream(() => shouldRequestFullView$)
+          .listen((bool shouldRequestFullView) {
         if (widget.onNeedFullView != null)
           widget.onNeedFullView(shouldRequestFullView);
       });

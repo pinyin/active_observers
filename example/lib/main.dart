@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage>
           duration: Duration(milliseconds: 300), value: 0, vsync: this);
       final shouldHideFooter$ = needFullView$.distinct();
 
-      observeStream(() => shouldHideFooter$, onData: (bool u) {
+      observeStream(() => shouldHideFooter$).listen((bool u) {
         hideFooter.animateTo(u ? 1 : 0);
       });
     }
