@@ -9,7 +9,7 @@ A new way to create composable UI logic, inspired by React hooks.
 ```dart
 import 'package:active_observers/active_observers.dart'; // 1.import package
 
-class TestObserveState extends StatefulWidget {
+class TestObserveState extends StatefulWidget with DetailedLifecyleInState {  // mixin is optional
   TestObserveState(this.stream);
   
   final Stream<String> stream;

@@ -58,7 +58,7 @@ class InheritedWidgetExample extends InheritedWidget {
   }
 }
 
-class TestObserveContext extends StatefulWidget {
+class TestObserveContext extends StatefulWidget with DetailedLifecycleInState {
   final Function() onValue;
 
   const TestObserveContext({Key key, this.onValue}) : super(key: key);

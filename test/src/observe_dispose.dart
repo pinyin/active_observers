@@ -19,7 +19,7 @@ void main() {
 
 enum Report { Dispose, CleanUp }
 
-class TestObserveDispose extends StatefulWidget {
+class TestObserveDispose extends StatefulWidget with DetailedLifecycleInState {
   TestObserveDispose(this.report, [this.isIdentical = true]);
 
   final bool isIdentical;

@@ -2,7 +2,7 @@ import 'package:active_observers/active_observers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class Router extends Navigator {
+class Router extends Navigator with DetailedLifecycleInState {
   const Router({
     @required RouteFactory onGenerateRoute,
     @required this.controller,

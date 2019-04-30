@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:active_observers/src/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// A type of observers that subscribes itself to the target [State]'s lifecycle.
@@ -19,11 +20,11 @@ import 'package:flutter/widgets.dart';
 /// make observers much more powerful.
 /// Inspired by React hooks.
 /// In this case, the observable being observed is a Flutter [StatefulWidget] [State].
-mixin ActiveObservers<T extends StatefulWidget> on State<T> {
+mixin ActiveObservers<T extends StatefulWidget> on State<T>
+    implements DetailedLifecycle<T> {
   void assembleActiveObservers();
 
   @override
-  @mustCallSuper
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
     activeObservers.forEach((observer) {
@@ -32,7 +33,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   }
 
   @override
-  @mustCallSuper
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didInitialized.value) {
@@ -47,8 +47,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   }
 
   @override
-  @mustCallSuper
-  @protected
   void setState(VoidCallback fn) {
     super.setState(fn);
     activeObservers.forEach((observer) {
@@ -57,20 +55,39 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   }
 
   @override
-  @mustCallSuper
   void reassemble() {
     activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
     activeObservers.clear();
-    activeObservable = this;
-    assembleActiveObservers();
-    activeObservable = null;
+    if (this.widget is! DetailedLifecycleInState) {
+      // will never call didReassemble, so restart observers here
+      // otherwise, restart observers before next build to get more correct behavior
+      activeObservable = this;
+      assembleActiveObservers();
+      activeObservable = null;
+    }
     super.reassemble();
   }
 
   @override
-  @mustCallSuper
+  void didReassemble() {
+    activeObservable = this;
+    assembleActiveObservers();
+    activeObservable = null;
+    activeObservers.forEach((observer) {
+      observer(StateLifecyclePhase.didReassemble);
+    });
+  }
+
+  @override
+  void willBuild() {
+    activeObservers.forEach((observer) {
+      observer(StateLifecyclePhase.willBuild);
+    });
+  }
+
+  @override
   void deactivate() {
     activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.deactivate);
@@ -79,7 +96,13 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   }
 
   @override
-  @mustCallSuper
+  void reactivate() {
+    activeObservers.forEach((observer) {
+      observer(StateLifecyclePhase.reactivate);
+    });
+  }
+
+  @override
   void dispose() {
     activeObservers.toList(growable: false).reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
@@ -91,11 +114,66 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T> {
   final Ref<bool> _didInitialized = Ref(false);
 }
 
+mixin DetailedLifecycle<T extends StatefulWidget> on State<T> {
+  @protected
+  @mustCallSuper
+  willBuild() {}
+
+  @protected
+  @mustCallSuper
+  didReassemble() {}
+
+  @protected
+  @mustCallSuper
+  reactivate() {}
+}
+
+mixin DetailedLifecycleInState on StatefulWidget {
+  @override
+  StatefulElement createElement() {
+    return _DetailedLifecycleProxy(this); // TODO make this composable
+  }
+}
+
+class _DetailedLifecycleProxy extends StatefulElement {
+  _DetailedLifecycleProxy(StatefulWidget widget) : super(widget);
+
+  @override
+  DetailedLifecycle get state => super.state;
+
+  @override
+  void performRebuild() {
+    if (justReassembled) {
+      state.didReassemble();
+      justReassembled = false;
+    }
+    state.willBuild();
+    super.performRebuild();
+  }
+
+  bool justReassembled = false;
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    justReassembled = true;
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    state.reactivate();
+  }
+}
+
 enum StateLifecyclePhase {
   didUpdateWidget,
   didChangeDependencies,
   didSetState,
+  didReassemble,
+  willBuild,
   deactivate,
+  reactivate,
   dispose,
 }
 

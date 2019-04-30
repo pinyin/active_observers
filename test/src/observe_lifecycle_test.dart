@@ -1,5 +1,4 @@
 import 'package:active_observers/active_observers.dart';
-import 'package:active_observers/src/observe_lifecycle.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -9,10 +8,14 @@ void main() {
         (tester) async {
       List<StateLifecyclePhase> report = [];
       await tester.pumpWidget(TestObserveLifecycle(report.add));
-      expect(report, [StateLifecyclePhase.didChangeDependencies]);
+      expect(report, [
+        StateLifecyclePhase.didChangeDependencies,
+        StateLifecyclePhase.willBuild
+      ]);
       report.clear();
       await tester.pumpWidget(TestObserveLifecycle((v) => report.add(v)));
-      expect(report, [StateLifecyclePhase.didUpdateWidget]);
+      expect(report,
+          [StateLifecyclePhase.didUpdateWidget, StateLifecyclePhase.willBuild]);
       report.clear();
       await tester.pumpWidget(Container());
       expect(report,
@@ -22,7 +25,8 @@ void main() {
   });
 }
 
-class TestObserveLifecycle extends StatefulWidget {
+class TestObserveLifecycle extends StatefulWidget
+    with DetailedLifecycleInState {
   TestObserveLifecycle(this.report);
 
   final void Function(StateLifecyclePhase) report;

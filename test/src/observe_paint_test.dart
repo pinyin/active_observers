@@ -36,7 +36,7 @@ void main() {
 
 enum Report { InitState, PaintStart, DidUpdateState }
 
-class TestObservePaint extends StatefulWidget {
+class TestObservePaint extends StatefulWidget with DetailedLifecycleInState {
   TestObservePaint(this.report, [this.isIdentical = true]);
 
   final bool isIdentical;

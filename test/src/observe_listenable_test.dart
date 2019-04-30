@@ -55,7 +55,8 @@ void main() {
   });
 }
 
-class TestObserveListenable extends StatefulWidget {
+class TestObserveListenable extends StatefulWidget
+    with DetailedLifecycleInState {
   final Listenable listenable;
   final VoidCallback report;
 

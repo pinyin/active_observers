@@ -63,3 +63,10 @@
 * `observeEffect` now receive a function to decide when to restart
 * `observeEffect` now may restart effect in setState
 * Add `observePaint` observer
+
+## [0.7.0]
+
+* Add `observeContext` and `observeInheritedWidget`
+* Adjust reassemble order 
+* Remove second parameter of `observeStream`  & `observeListenable`, use return value instead
+* Add additional lifecycle methods

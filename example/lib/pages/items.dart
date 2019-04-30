@@ -10,7 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import '../utils/keep_scroll_controller.dart';
 import '../utils/observable.dart';
 
-class Items extends StatefulWidget {
+class Items extends StatefulWidget with DetailedLifecycleInState {
   const Items({Key key, this.onNeedFullView, this.onOpenItem})
       : super(key: key);
 

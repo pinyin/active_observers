@@ -40,7 +40,7 @@ void main() {
 
 enum Report { InitState, EffectStart, EffectCleanUp, DidUpdateState, Dispose }
 
-class TestObserveEffect extends StatefulWidget {
+class TestObserveEffect extends StatefulWidget with DetailedLifecycleInState {
   TestObserveEffect(this.report, [this.isIdentical = true]);
 
   final bool isIdentical;

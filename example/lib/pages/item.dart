@@ -1,7 +1,7 @@
 import 'package:active_observers/active_observers.dart';
 import 'package:flutter/material.dart';
 
-class Item extends StatefulWidget {
+class Item extends StatefulWidget with DetailedLifecycleInState {
   const Item({
     @required this.item,
     Key key,

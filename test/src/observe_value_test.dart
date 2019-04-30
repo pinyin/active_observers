@@ -1,5 +1,4 @@
 import 'package:active_observers/active_observers.dart';
-import 'package:active_observers/src/observe_value.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +29,7 @@ void main() {
   });
 }
 
-class TestObserveValue extends StatefulWidget {
+class TestObserveValue extends StatefulWidget with DetailedLifecycleInState {
   final String value;
   final Function() onCompute;
   final bool Function() recomputeWhen;

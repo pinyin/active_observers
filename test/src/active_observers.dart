@@ -1,5 +1,4 @@
 import 'package:active_observers/active_observers.dart';
-import 'package:active_observers/src/active_observers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -41,7 +40,7 @@ class Report {
   Report(this.order, this.phase);
 }
 
-class TestObserveOrder extends StatefulWidget {
+class TestObserveOrder extends StatefulWidget with DetailedLifecycleInState {
   final void Function(Report) report;
 
   const TestObserveOrder({Key key, this.report}) : super(key: key);

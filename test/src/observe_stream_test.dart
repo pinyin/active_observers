@@ -65,7 +65,7 @@ void main() {
   });
 }
 
-class TestObserveStream extends StatefulWidget {
+class TestObserveStream extends StatefulWidget with DetailedLifecycleInState {
   const TestObserveStream({Key key, this.stream, this.onDone})
       : super(key: key);
 
