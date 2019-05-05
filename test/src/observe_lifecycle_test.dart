@@ -10,12 +10,16 @@ void main() {
       await tester.pumpWidget(TestObserveLifecycle(report.add));
       expect(report, [
         StateLifecyclePhase.didChangeDependencies,
-        StateLifecyclePhase.willBuild
+        StateLifecyclePhase.willBuild,
+        StateLifecyclePhase.didBuild,
       ]);
       report.clear();
       await tester.pumpWidget(TestObserveLifecycle((v) => report.add(v)));
-      expect(report,
-          [StateLifecyclePhase.didUpdateWidget, StateLifecyclePhase.willBuild]);
+      expect(report, [
+        StateLifecyclePhase.didUpdateWidget,
+        StateLifecyclePhase.willBuild,
+        StateLifecyclePhase.didBuild,
+      ]);
       report.clear();
       await tester.pumpWidget(Container());
       expect(report,
