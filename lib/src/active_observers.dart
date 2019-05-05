@@ -163,17 +163,19 @@ class _DetailedLifecycleProxy extends StatefulElement {
   @override
   DetailedLifecycle get state => super.state;
 
+  Widget built;
+
   @override
   Widget build() {
     if (justReassembled) {
       state.didReassemble();
       justReassembled = false;
     }
-    if (!state.shouldRebuild()) return widget;
+    if (!state.shouldRebuild() && built != null) return built;
     state.willBuild();
-    final result = super.build();
+    built = super.build();
     state.didBuild();
-    return result;
+    return built;
   }
 
   bool justReassembled = false;
