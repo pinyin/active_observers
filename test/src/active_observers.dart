@@ -1,4 +1,4 @@
-import 'package:active_observers/active_observers.dart';
+import 'package:active_observers/src/active_observers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -55,10 +55,10 @@ class _TestObserveOrderState extends State<TestObserveOrder>
 
   @override
   assembleActiveObservers() {
-    activeObservers.add((phase) {
+    registerActiveObserver((phase) {
       widget.report(Report(1, phase));
     });
-    activeObservers.add((phase) {
+    registerActiveObserver((phase) {
       widget.report(Report(2, phase));
     });
   }

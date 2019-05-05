@@ -7,5 +7,5 @@ export 'active_observers.dart' show StateLifecyclePhase;
 void observeLifecycle(void Function(StateLifecyclePhase) run) {
   if (activeObservable == null)
     throw 'Active observers can only be initialized in assembleActiveObservers() method in State';
-  activeObservable.activeObservers.add(run);
+  registerActiveObserver(run);
 }
