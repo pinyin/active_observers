@@ -81,9 +81,21 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
   }
 
   @override
+  bool shouldRebuild() {
+    return true;
+  }
+
+  @override
   void willBuild() {
     activeObservers.forEach((observer) {
       observer(StateLifecyclePhase.willBuild);
+    });
+  }
+
+  @override
+  didBuild() {
+    activeObservers.forEach((observer) {
+      observer(StateLifecyclePhase.didBuild);
     });
   }
 
@@ -121,6 +133,16 @@ mixin DetailedLifecycle<T extends StatefulWidget> on State<T> {
 
   @protected
   @mustCallSuper
+  didBuild() {}
+
+  @protected
+  @mustCallSuper
+  bool shouldRebuild() {
+    return true;
+  }
+
+  @protected
+  @mustCallSuper
   didReassemble() {}
 
   @protected
@@ -128,6 +150,7 @@ mixin DetailedLifecycle<T extends StatefulWidget> on State<T> {
   reactivate() {}
 }
 
+// TODO test this
 mixin DetailedLifecycleInState on StatefulWidget {
   @override
   StatefulElement createElement() {
@@ -142,13 +165,16 @@ class _DetailedLifecycleProxy extends StatefulElement {
   DetailedLifecycle get state => super.state;
 
   @override
-  void performRebuild() {
+  Widget build() {
     if (justReassembled) {
       state.didReassemble();
       justReassembled = false;
     }
+    if (!state.shouldRebuild()) return widget;
     state.willBuild();
-    super.performRebuild();
+    final result = super.build();
+    state.didBuild();
+    return result;
   }
 
   bool justReassembled = false;
@@ -172,6 +198,7 @@ enum StateLifecyclePhase {
   didSetState,
   didReassemble,
   willBuild,
+  didBuild,
   deactivate,
   reactivate,
   dispose,
