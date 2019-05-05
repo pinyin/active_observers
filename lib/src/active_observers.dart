@@ -1,6 +1,5 @@
-import 'dart:collection';
-
 import 'package:active_observers/src/utils.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -56,7 +55,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
 
   @override
   void reassemble() {
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    activeObservers.reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
     activeObservers.clear();
@@ -101,7 +100,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
 
   @override
   void deactivate() {
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    activeObservers.reversed.forEach((observer) {
       observer(StateLifecyclePhase.deactivate);
     });
     super.deactivate();
@@ -116,13 +115,13 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
 
   @override
   void dispose() {
-    activeObservers.toList(growable: false).reversed.forEach((observer) {
+    activeObservers.reversed.forEach((observer) {
       observer(StateLifecyclePhase.dispose);
     });
     super.dispose();
   }
 
-  final Set<ObserverHandler> activeObservers = LinkedHashSet<ObserverHandler>();
+  final List<ObserverHandler> activeObservers = QueueList<ObserverHandler>();
   final Ref<bool> _didInitialized = Ref(false);
 }
 
