@@ -70,3 +70,5 @@
 * Adjust reassemble order 
 * Remove second parameter of `observeStream`  & `observeListenable`, use return value instead
 * Add additional lifecycle methods
+* Update multiple interface
+* Improve calling performance

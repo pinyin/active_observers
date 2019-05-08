@@ -3,64 +3,53 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('ActiveObservers', () {
-    testWidgets('should call observers in expected order', (tester) async {
-      final reports = <Report>[];
-      await tester.pumpWidget(TestObserveOrder(report: reports.add));
-      expect(reports.map((r) => r.order), [1, 2, 1, 2]);
-      expect(reports.map((r) => r.phase), [
+  group('observeLifecycle', () {
+    testWidgets('should call callbacks on specified lifecycle phases',
+        (tester) async {
+      List<StateLifecyclePhase> report = [];
+      await tester.pumpWidget(TestObserveLifecycle(report.add));
+      expect(report, [
         StateLifecyclePhase.didChangeDependencies,
-        StateLifecyclePhase.didChangeDependencies,
+        StateLifecyclePhase.willBuild,
+        StateLifecyclePhase.didBuild,
       ]);
-      reports.clear();
-      await tester.pumpWidget(TestObserveOrder(report: reports.add));
-      expect(reports.map((r) => r.order), [1, 2]);
-      expect(reports.map((r) => r.phase), [
+      report.clear();
+      await tester.pumpWidget(TestObserveLifecycle((v) => report.add(v)));
+      expect(report, [
         StateLifecyclePhase.didUpdateWidget,
-        StateLifecyclePhase.didUpdateWidget,
+        StateLifecyclePhase.willBuild,
+        StateLifecyclePhase.didBuild,
       ]);
-      reports.clear();
+      report.clear();
       await tester.pumpWidget(Container());
-      expect(reports.map((r) => r.order), [2, 1, 2, 1]);
-      expect(reports.map((r) => r.phase), [
-        StateLifecyclePhase.deactivate,
-        StateLifecyclePhase.deactivate,
-        StateLifecyclePhase.dispose,
-        StateLifecyclePhase.dispose,
-      ]);
+      expect(report,
+          [StateLifecyclePhase.deactivate, StateLifecyclePhase.dispose]);
+      report.clear();
     });
   });
 }
 
-@immutable
-class Report {
-  final int order;
-  final StateLifecyclePhase phase;
+class TestObserveLifecycle extends StatefulWidget
+    with DetailedLifecycleInState {
+  TestObserveLifecycle(this.report);
 
-  Report(this.order, this.phase);
-}
-
-class TestObserveOrder extends StatefulWidget with DetailedLifecycleInState {
-  final void Function(Report) report;
-
-  const TestObserveOrder({Key key, this.report}) : super(key: key);
+  final void Function(StateLifecyclePhase) report;
 
   @override
-  _TestObserveOrderState createState() => _TestObserveOrderState();
+  _TestObserveLifecycleState createState() => _TestObserveLifecycleState();
 }
 
-class _TestObserveOrderState extends State<TestObserveOrder>
+class _TestObserveLifecycleState extends State<TestObserveLifecycle>
     with ActiveObservers {
-  // TODO find a way to test reassemble
-
   @override
   assembleActiveObservers() {
-    registerActiveObserver((phase) {
-      widget.report(Report(1, phase));
-    });
-    registerActiveObserver((phase) {
-      widget.report(Report(2, phase));
-    });
+    observeLifecycle(StateLifecyclePhase.didChangeDependencies, widget.report);
+    observeLifecycle(StateLifecyclePhase.didSetState, widget.report);
+    observeLifecycle(StateLifecyclePhase.didUpdateWidget, widget.report);
+    observeLifecycle(StateLifecyclePhase.deactivate, widget.report);
+    observeLifecycle(StateLifecyclePhase.dispose, widget.report);
+    observeLifecycle(StateLifecyclePhase.willBuild, widget.report);
+    observeLifecycle(StateLifecyclePhase.didBuild, widget.report);
   }
 
   @override

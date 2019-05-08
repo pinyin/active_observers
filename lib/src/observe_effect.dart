@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 
-import 'observe_lifecycle.dart';
+import 'active_observers.dart';
 
 /// [effect] will be called in State's [initState].
 /// [effect] should return a callback that will be called in [dispose]. Typically,
@@ -15,7 +15,7 @@ void observeEffect(VoidCallback Function() effect,
   VoidCallback cancel = effect();
   Iterable latestDeps = deps != null ? deps() : null;
 
-  observeLifecycle((phase) {
+  ActiveObserver observer = (phase) {
     switch (phase) {
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
@@ -38,7 +38,11 @@ void observeEffect(VoidCallback Function() effect,
       default:
         {}
     }
-  });
+  };
+  observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
+  observeLifecycle(StateLifecyclePhase.didUpdateWidget, observer);
+  observeLifecycle(StateLifecyclePhase.didSetState, observer);
+  observeLifecycle(StateLifecyclePhase.dispose, observer);
 }
 
 final equals = const IterableEquality().equals;

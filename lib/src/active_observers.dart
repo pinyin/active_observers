@@ -1,4 +1,3 @@
-import 'package:active_observers/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -26,9 +25,9 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
   @override
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.didUpdateWidget);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.didUpdateWidget] ??=
+            QueueList())
+        .forEach((observer) => observer(StateLifecyclePhase.didUpdateWidget));
   }
 
   @override
@@ -40,25 +39,25 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
       activeObservable = null;
       _didInitialized.value = true;
     }
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.didChangeDependencies);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.didChangeDependencies] ??=
+            QueueList())
+        .forEach(
+            (observer) => observer(StateLifecyclePhase.didChangeDependencies));
   }
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.didSetState);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.didSetState] ??= QueueList())
+        .forEach((observer) => observer(StateLifecyclePhase.didSetState));
   }
 
   @override
   void reassemble() {
-    _observerHandlers.reversed.forEach((observer) {
-      observer(StateLifecyclePhase.dispose);
-    });
-    _observerHandlers.clear();
+    (_observerRegistry.value[StateLifecyclePhase.dispose] ??= QueueList())
+        .reversed
+        .forEach((observer) => observer(StateLifecyclePhase.dispose));
+    _observerRegistry.value = Map();
     if (this.widget is! DetailedLifecycleInState) {
       // will never call didReassemble, so restart observers here
       // otherwise, restart observers before next build to get more correct behavior
@@ -74,9 +73,6 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
     activeObservable = this;
     assembleActiveObservers();
     activeObservable = null;
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.didReassemble);
-    });
   }
 
   @override
@@ -86,43 +82,49 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
 
   @override
   void willBuild() {
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.willBuild);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.willBuild] ??= QueueList())
+        .reversed
+        .forEach((observer) => observer(StateLifecyclePhase.willBuild));
   }
 
   @override
   didBuild() {
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.didBuild);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.didBuild] ??= QueueList())
+        .reversed
+        .forEach((observer) => observer(StateLifecyclePhase.didBuild));
   }
 
   @override
   void deactivate() {
-    _observerHandlers.reversed.forEach((observer) {
-      observer(StateLifecyclePhase.deactivate);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.deactivate] ??= QueueList())
+        .reversed
+        .forEach((observer) => observer(StateLifecyclePhase.deactivate));
     super.deactivate();
   }
 
   @override
   void reactivate() {
-    _observerHandlers.forEach((observer) {
-      observer(StateLifecyclePhase.reactivate);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.reactivate] ??= QueueList())
+        .forEach((observer) => observer(StateLifecyclePhase.reactivate));
   }
 
   @override
   void dispose() {
-    _observerHandlers.reversed.forEach((observer) {
-      observer(StateLifecyclePhase.dispose);
-    });
+    (_observerRegistry.value[StateLifecyclePhase.dispose] ??= QueueList())
+        .reversed
+        .forEach((observer) => observer(StateLifecyclePhase.dispose));
     super.dispose();
   }
 
-  final List<ObserverHandler> _observerHandlers = QueueList<ObserverHandler>();
-  final Ref<bool> _didInitialized = Ref(false);
+  final _observerRegistry =
+      Ref(Map<StateLifecyclePhase, QueueList<ActiveObserver>>());
+  final _didInitialized = Ref(false);
+}
+
+void observeLifecycle(StateLifecyclePhase on, ActiveObserver observer) {
+  if (activeObservable == null)
+    throw 'Active observers can only be initialized in assembleActiveObservers() method in State';
+  (activeObservable._observerRegistry.value[on] ??= QueueList()).add(observer);
 }
 
 mixin DetailedLifecycle<T extends StatefulWidget> on State<T> {
@@ -197,7 +199,6 @@ enum StateLifecyclePhase {
   didUpdateWidget,
   didChangeDependencies,
   didSetState,
-  didReassemble,
   willBuild,
   didBuild,
   deactivate,
@@ -205,8 +206,12 @@ enum StateLifecyclePhase {
   dispose,
 }
 
-typedef ObserverHandler = void Function(StateLifecyclePhase phase);
+typedef ActiveObserver = void Function(StateLifecyclePhase phase);
 
 ActiveObservers activeObservable;
-Function(ObserverHandler) get registerActiveObserver =>
-    activeObservable._observerHandlers.add;
+
+class Ref<T> {
+  T value;
+
+  Ref(this.value);
+}

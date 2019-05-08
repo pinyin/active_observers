@@ -56,7 +56,9 @@ class _TestObserveEffectState extends State<TestObserveEffect>
   assembleActiveObservers() {
     observeEffect(() {
       widget.report(Report.EffectStart);
-      return () => {widget.report(Report.EffectCleanUp)};
+      return () {
+        widget.report(Report.EffectCleanUp);
+      };
     }, restartWhen: () => !widget.isIdentical);
   }
 

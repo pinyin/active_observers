@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:active_observers/active_observers.dart';
+import 'package:active_observers/src/active_observers.dart';
 
 /// Create a proxy to a stream. The subscriptions will be automatically cancelled
 /// when host [State] is disposed.
@@ -14,7 +15,7 @@ Stream<T> observeStream<T>(Stream<T> getStream()) {
     return stream.listen(controller.add, onError: controller.addError).cancel;
   }, restartWhen: () => stream != getStream());
 
-  observeDispose(controller.close);
+  observeLifecycle(StateLifecyclePhase.dispose, (_) => controller.close());
 
   return controller.stream;
 }

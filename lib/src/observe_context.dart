@@ -1,14 +1,14 @@
 import 'package:active_observers/active_observers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import './active_observers.dart';
-import './utils.dart';
 
-Memo<T> observeContext<T>(T Function(BuildContext) dependency) {
+ValueListenable<T> observeContext<T>(T Function(BuildContext) dependency) {
   final target = activeObservable;
-  final result = MemoController<T>(dependency(target.context));
+  final result = ValueNotifier<T>(dependency(target.context));
 
-  observeLifecycle((phase) {
+  final ActiveObserver observer = (phase) {
     switch (phase) {
       case StateLifecyclePhase.didChangeDependencies:
         final currentDependency = dependency(target.context);
@@ -18,7 +18,8 @@ Memo<T> observeContext<T>(T Function(BuildContext) dependency) {
       default:
         break;
     }
-  });
+  };
+  observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
 
   return result;
 }

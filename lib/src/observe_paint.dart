@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'observe_lifecycle.dart';
+import 'active_observers.dart';
 
 /// Run [callback] after initial paint, then call it again when this state
 /// is updated and [rerunWhen] returns true.
@@ -22,7 +22,7 @@ void observePaint(void callback(), {bool Function() rerunWhen}) {
 
   scheduleCallback();
 
-  observeLifecycle((lifecycle) {
+  ActiveObserver observer = (lifecycle) {
     switch (lifecycle) {
       case StateLifecyclePhase.didChangeDependencies:
       case StateLifecyclePhase.didUpdateWidget:
@@ -32,5 +32,8 @@ void observePaint(void callback(), {bool Function() rerunWhen}) {
       default:
         break;
     }
-  });
+  };
+  observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
+  observeLifecycle(StateLifecyclePhase.didUpdateWidget, observer);
+  observeLifecycle(StateLifecyclePhase.didSetState, observer);
 }
