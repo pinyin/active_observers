@@ -71,7 +71,7 @@ class _TestObserverInheritedWidgetState
   void assembleActiveObservers() {
     final inherited = observeInheritedWidget(() => defaultDeps);
     value = inherited.value.value;
-    observeListenable(() => inherited, () {
+    inherited.addListener(() {
       if (widget.onValue != null) widget.onValue();
       value = inherited.value.value;
     });

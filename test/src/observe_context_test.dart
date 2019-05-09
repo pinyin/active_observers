@@ -73,7 +73,7 @@ class _TestObserveContextState extends State<TestObserveContext>
   void assembleActiveObservers() {
     final inherited = observeContext(InheritedWidgetExample.of);
     value = inherited.value.value;
-    observeListenable(() => inherited, () {
+    inherited.addListener(() {
       if (widget.onValue != null) widget.onValue();
       value = inherited.value.value;
     });

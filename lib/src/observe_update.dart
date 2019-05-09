@@ -10,7 +10,7 @@ import 'active_observers.dart';
 /// Whenever the widget is updated([didUpdateWidget]), if [restartWhen] returns false
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
-void observeEffect(VoidCallback Function() effect,
+void observeUpdate(VoidCallback Function() effect,
     {bool restartWhen(), Iterable deps()}) {
   VoidCallback cancel = effect();
   Iterable latestDeps = deps != null ? deps() : null;

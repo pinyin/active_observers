@@ -67,6 +67,8 @@
 ## [0.7.0]
 
 * Add `observeContext` and `observeInheritedWidget`
+* Remove some observers
+* Rename `observeEffect` to `observeUpdate`
 * Adjust reassemble order 
 * Remove second parameter of `observeStream`  & `observeListenable`, use return value instead
 * Add additional lifecycle methods

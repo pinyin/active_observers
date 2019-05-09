@@ -54,7 +54,7 @@ class _TestObserveEffectState extends State<TestObserveEffect>
     with ActiveObservers {
   @override
   assembleActiveObservers() {
-    observeEffect(() {
+    observeUpdate(() {
       widget.report(Report.EffectStart);
       return () {
         widget.report(Report.EffectCleanUp);
