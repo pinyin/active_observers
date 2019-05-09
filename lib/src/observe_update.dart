@@ -15,34 +15,28 @@ void observeUpdate(VoidCallback Function() effect,
   VoidCallback cancel = effect();
   Iterable latestDeps = deps != null ? deps() : null;
 
-  ActiveObserver observer = (phase) {
-    switch (phase) {
-      case StateLifecyclePhase.didChangeDependencies:
-      case StateLifecyclePhase.didUpdateWidget:
-      case StateLifecyclePhase.didSetState:
-        final isForcingRestart = restartWhen != null ? restartWhen() : false;
-        var hasDepsUpdated = false;
-        if (deps != null) {
-          final currentDeps = deps();
-          hasDepsUpdated = !equals(latestDeps, currentDeps);
-          latestDeps = currentDeps;
-        }
-        if (isForcingRestart || hasDepsUpdated) {
-          if (cancel != null) cancel();
-          cancel = effect();
-        }
-        break;
-      case StateLifecyclePhase.dispose:
-        if (cancel != null) cancel();
-        break;
-      default:
-        {}
+  VoidCallback observer = () {
+    final isForcingRestart = restartWhen != null ? restartWhen() : false;
+    var hasDepsUpdated = false;
+    if (deps != null) {
+      final currentDeps = deps();
+      hasDepsUpdated = !equals(latestDeps, currentDeps);
+      latestDeps = currentDeps;
+    }
+    if (isForcingRestart || hasDepsUpdated) {
+      if (cancel != null) cancel();
+      cancel = effect();
     }
   };
+
   observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
   observeLifecycle(StateLifecyclePhase.didUpdateWidget, observer);
   observeLifecycle(StateLifecyclePhase.didSetState, observer);
-  observeLifecycle(StateLifecyclePhase.dispose, observer);
+  observeLifecycle(StateLifecyclePhase.dispose, () {
+    if (cancel != null) cancel();
+  });
 }
+
+void observeUpdateToListener() {}
 
 final equals = const IterableEquality().equals;

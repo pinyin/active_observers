@@ -22,16 +22,8 @@ void observePaint(void callback(), {bool Function() rerunWhen}) {
 
   scheduleCallback();
 
-  ActiveObserver observer = (lifecycle) {
-    switch (lifecycle) {
-      case StateLifecyclePhase.didChangeDependencies:
-      case StateLifecyclePhase.didUpdateWidget:
-      case StateLifecyclePhase.didSetState:
-        if (rerunWhen != null && rerunWhen()) scheduleCallback();
-        break;
-      default:
-        break;
-    }
+  VoidCallback observer = () {
+    if (rerunWhen != null && rerunWhen()) scheduleCallback();
   };
   observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
   observeLifecycle(StateLifecyclePhase.didUpdateWidget, observer);

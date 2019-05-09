@@ -27,7 +27,7 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
     super.didUpdateWidget(oldWidget);
     (_observerRegistry.value[StateLifecyclePhase.didUpdateWidget] ??=
             QueueList())
-        .forEach((observer) => observer(StateLifecyclePhase.didUpdateWidget));
+        .forEach((observer) => observer());
   }
 
   @override
@@ -41,22 +41,21 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
     }
     (_observerRegistry.value[StateLifecyclePhase.didChangeDependencies] ??=
             QueueList())
-        .forEach(
-            (observer) => observer(StateLifecyclePhase.didChangeDependencies));
+        .forEach((observer) => observer());
   }
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
     (_observerRegistry.value[StateLifecyclePhase.didSetState] ??= QueueList())
-        .forEach((observer) => observer(StateLifecyclePhase.didSetState));
+        .forEach((observer) => observer());
   }
 
   @override
   void reassemble() {
     (_observerRegistry.value[StateLifecyclePhase.dispose] ??= QueueList())
         .reversed
-        .forEach((observer) => observer(StateLifecyclePhase.dispose));
+        .forEach((observer) => observer());
     _observerRegistry.value = Map();
     if (this.widget is! DetailedLifecycleInState) {
       // will never call didReassemble, so restart observers here
@@ -84,44 +83,44 @@ mixin ActiveObservers<T extends StatefulWidget> on State<T>
   void willBuild() {
     (_observerRegistry.value[StateLifecyclePhase.willBuild] ??= QueueList())
         .reversed
-        .forEach((observer) => observer(StateLifecyclePhase.willBuild));
+        .forEach((observer) => observer());
   }
 
   @override
   didBuild() {
     (_observerRegistry.value[StateLifecyclePhase.didBuild] ??= QueueList())
         .reversed
-        .forEach((observer) => observer(StateLifecyclePhase.didBuild));
+        .forEach((observer) => observer());
   }
 
   @override
   void deactivate() {
     (_observerRegistry.value[StateLifecyclePhase.deactivate] ??= QueueList())
         .reversed
-        .forEach((observer) => observer(StateLifecyclePhase.deactivate));
+        .forEach((observer) => observer());
     super.deactivate();
   }
 
   @override
   void reactivate() {
     (_observerRegistry.value[StateLifecyclePhase.reactivate] ??= QueueList())
-        .forEach((observer) => observer(StateLifecyclePhase.reactivate));
+        .forEach((observer) => observer());
   }
 
   @override
   void dispose() {
     (_observerRegistry.value[StateLifecyclePhase.dispose] ??= QueueList())
         .reversed
-        .forEach((observer) => observer(StateLifecyclePhase.dispose));
+        .forEach((observer) => observer());
     super.dispose();
   }
 
   final _observerRegistry =
-      Ref(Map<StateLifecyclePhase, QueueList<ActiveObserver>>());
+      Ref(Map<StateLifecyclePhase, QueueList<VoidCallback>>());
   final _didInitialized = Ref(false);
 }
 
-void observeLifecycle(StateLifecyclePhase on, ActiveObserver observer) {
+void observeLifecycle(StateLifecyclePhase on, VoidCallback observer) {
   if (activeObservable == null)
     throw 'Active observers can only be initialized in assembleActiveObservers() method in State';
   (activeObservable._observerRegistry.value[on] ??= QueueList()).add(observer);
@@ -205,8 +204,6 @@ enum StateLifecyclePhase {
   reactivate,
   dispose,
 }
-
-typedef ActiveObserver = void Function(StateLifecyclePhase phase);
 
 ActiveObservers activeObservable;
 

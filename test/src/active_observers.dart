@@ -43,13 +43,20 @@ class _TestObserveLifecycleState extends State<TestObserveLifecycle>
     with ActiveObservers {
   @override
   assembleActiveObservers() {
-    observeLifecycle(StateLifecyclePhase.didChangeDependencies, widget.report);
-    observeLifecycle(StateLifecyclePhase.didSetState, widget.report);
-    observeLifecycle(StateLifecyclePhase.didUpdateWidget, widget.report);
-    observeLifecycle(StateLifecyclePhase.deactivate, widget.report);
-    observeLifecycle(StateLifecyclePhase.dispose, widget.report);
-    observeLifecycle(StateLifecyclePhase.willBuild, widget.report);
-    observeLifecycle(StateLifecyclePhase.didBuild, widget.report);
+    observeLifecycle(StateLifecyclePhase.didChangeDependencies,
+        () => widget.report(StateLifecyclePhase.didChangeDependencies));
+    observeLifecycle(StateLifecyclePhase.didSetState,
+        () => widget.report(StateLifecyclePhase.didSetState));
+    observeLifecycle(StateLifecyclePhase.didUpdateWidget,
+        () => widget.report(StateLifecyclePhase.didUpdateWidget));
+    observeLifecycle(StateLifecyclePhase.deactivate,
+        () => widget.report(StateLifecyclePhase.deactivate));
+    observeLifecycle(StateLifecyclePhase.dispose,
+        () => widget.report(StateLifecyclePhase.dispose));
+    observeLifecycle(StateLifecyclePhase.willBuild,
+        () => widget.report(StateLifecyclePhase.willBuild));
+    observeLifecycle(StateLifecyclePhase.didBuild,
+        () => widget.report(StateLifecyclePhase.didBuild));
   }
 
   @override

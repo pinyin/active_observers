@@ -10,19 +10,11 @@ ValueListenable<T> observeInheritedWidget<T extends InheritedWidget>(
   final result = ValueNotifier<T>(
       target.context.inheritFromWidgetOfExactType(T) ?? orElse());
 
-  ActiveObserver observer = (phase) {
-    switch (phase) {
-      case StateLifecyclePhase.didChangeDependencies:
-        final T widget =
-            target.context.inheritFromWidgetOfExactType(T) ?? orElse();
-        if (widget == result.value) return;
-        result.value = widget;
-        break;
-      default:
-        break;
-    }
-  };
-  observeLifecycle(StateLifecyclePhase.didChangeDependencies, observer);
+  observeLifecycle(StateLifecyclePhase.didChangeDependencies, () {
+    final T widget = target.context.inheritFromWidgetOfExactType(T) ?? orElse();
+    if (widget == result.value) return;
+    result.value = widget;
+  });
 
   return result;
 }
