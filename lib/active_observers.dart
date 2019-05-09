@@ -2,6 +2,7 @@ library active_observers;
 
 export 'src/active_observers.dart'
     show
+        observeLifecycle,
         ActiveObservers,
         StateLifecyclePhase,
         DetailedLifecycleInState,
