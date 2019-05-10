@@ -11,15 +11,15 @@ import 'active_observers.dart';
 /// the callback returned by previous [effect] will be called to clean up previous
 /// [effect] , then [effect] is called again. tl;dr [effect] will be restarted.
 void observeUpdate(VoidCallback Function() effect,
-    {bool restartWhen(), Iterable deps()}) {
+    {bool restartWhen(), Iterable values()}) {
   VoidCallback cancel = effect();
-  Iterable latestDeps = deps != null ? deps() : null;
+  Iterable latestDeps = values != null ? values() : null;
 
   VoidCallback observer = () {
     final isForcingRestart = restartWhen != null ? restartWhen() : false;
     var hasDepsUpdated = false;
-    if (deps != null) {
-      final currentDeps = deps();
+    if (values != null) {
+      final currentDeps = values();
       hasDepsUpdated = !equals(latestDeps, currentDeps);
       latestDeps = currentDeps;
     }

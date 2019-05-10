@@ -70,7 +70,5 @@
 * Remove some observers
 * Rename `observeEffect` to `observeUpdate`
 * Adjust reassemble order 
-* Remove second parameter of `observeStream`  & `observeListenable`, use return value instead
-* Add additional lifecycle methods
-* Update multiple interface
-* Improve calling performance
+* Add optional widget mixin `DetailedLifecycleInstate`
+* Improve performance

@@ -24,11 +24,12 @@ class _TestObserveStateState extends State<TestObserveState>
   assembleActiveObservers() {
     // 3. Setup active observers in assembleActiveObservers
     // codes in this method will be executed on hot reload
-    observeStream(()=> widget.stream, (v){
+    observeUpdate(()=> widget.stream.listen((v){
+      // subscription will be automatically restarted when any value in values updates
       setState((){
         value = v;
       });
-    });
+    }).cancel, values: ()=> [widget.stream]);
   }
 
   String value;
